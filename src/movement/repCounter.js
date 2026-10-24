@@ -4,11 +4,15 @@
 //   STANDING   平滑膝角 < STAND_ANGLE        → DESCENDING（开始记录这次动作）
 //   DESCENDING 平滑膝角 < BOTTOM_ENTER_ANGLE → BOTTOM
 //              平滑膝角 ≥ STAND_ANGLE        → STANDING（没蹲到底，不计数）
-//   BOTTOM     平滑膝角 > BOTTOM_EXIT_ANGLE  → ASCENDING（滞回：100 进，110 出）
+//   BOTTOM     平滑膝角 > BOTTOM_EXIT_ANGLE  → ASCENDING（滞回：进入值和离开值差 10°）
 //   ASCENDING  平滑膝角 < BOTTOM_ENTER_ANGLE → BOTTOM（又蹲回去了，还是同一次）
 //              平滑膝角 ≥ STAND_ANGLE        → STANDING，时长 ≥ MIN_REP_DURATION_MS 才计数
 //
 // valid 为 false 或膝角为 null 的帧直接跳过，不改变任何状态。
+//
+// 丢失追踪太久（两个有效帧间隔 > TRACKING_GAP_MS）：放弃正在做的这一次，回到 STANDING，
+// 并且要先看到站直（膝角 ≥ STAND_ANGLE）才开始数下一次。训练刚开始时也一样要先站直。
+// 这样用户蹲着出框、回来再站起，不会被多算一次。
 
 import { PHASE } from '../shared/contracts.js';
 import { kneeAngleDeg } from './angles.js';
@@ -27,6 +31,8 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
   let repCount = 0;
   let currentRep = null;   // { startTimestampMs, standingAngle, samples: [] }
   let standingPeak = null; // 站立阶段的最大平滑膝角，作为这次动作的起点角度
+  let lastValidTimestampMs = null;
+  let waitingForStand = true; // 开始时和丢失追踪太久之后，要先站直才开始计数
   const reps = [];         // 已完成的每次动作
 
   function startRep(timestampMs) {
@@ -54,7 +60,9 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
    * 被跳过的帧返回 null；否则返回本帧结果：
    *   { phase, kneeAngleDeg, smoothedAngle, repCount,
    *     completedRep,  // 这一帧刚完成一次计数时有值，否则 null
-   *     abortedRep }   // 这一帧放弃了一次动作时有值（没蹲到底 / 太快），否则 null。P4 纠错可以用
+   *     abortedRep,    // 这一帧放弃了一次动作时有值，否则 null。reason 为
+   *                    //   'not_deep_enough'（没蹲到底）、'too_fast'（太快）、'tracking_lost'（中途丢失追踪太久）
+   *     waitingForStand } // true 表示正在等用户站直，这时不计数
    */
   function processFrame(poseFrame) {
     if (!poseFrame || poseFrame.valid === false) return null;
@@ -64,13 +72,34 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
     if (raw == null) return null;
 
     const t = poseFrame.timestampMs;
+    let completedRep = null;
+    let abortedRep = null;
+
+    // 丢失追踪太久：放弃这一次，平滑也重新开始（旧的平滑值已经不代表现在的姿势）
+    if (lastValidTimestampMs != null && t - lastValidTimestampMs > cfg.TRACKING_GAP_MS) {
+      if (currentRep) {
+        abortedRep = { reason: 'tracking_lost', ...summarize(currentRep, lastValidTimestampMs) };
+      }
+      phase = PHASE.STANDING;
+      currentRep = null;
+      smoothedAngle = null;
+      standingPeak = null;
+      waitingForStand = true;
+    }
+    lastValidTimestampMs = t;
+
     smoothedAngle = smoothedAngle == null
       ? raw
       : cfg.SMOOTHING_ALPHA * raw + (1 - cfg.SMOOTHING_ALPHA) * smoothedAngle;
     const a = smoothedAngle;
 
-    let completedRep = null;
-    let abortedRep = null;
+    if (waitingForStand) {
+      if (a >= cfg.STAND_ANGLE) {
+        waitingForStand = false;
+        standingPeak = a;
+      }
+      return { phase, kneeAngleDeg: raw, smoothedAngle: a, repCount, completedRep, abortedRep, waitingForStand };
+    }
 
     if (phase === PHASE.STANDING) {
       standingPeak = Math.max(standingPeak ?? a, a);
@@ -113,7 +142,7 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
       standingPeak = a;   // 新一轮站立从这一帧重新算峰值
     }
 
-    return { phase, kneeAngleDeg: raw, smoothedAngle: a, repCount, completedRep, abortedRep };
+    return { phase, kneeAngleDeg: raw, smoothedAngle: a, repCount, completedRep, abortedRep, waitingForStand };
   }
 
   function getState() {
@@ -121,6 +150,7 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
       phase,
       repCount,
       smoothedAngle,
+      waitingForStand,
       currentRep: currentRep && {
         startTimestampMs: currentRep.startTimestampMs,
         sampleCount: currentRep.samples.length,
@@ -135,6 +165,8 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
     repCount = 0;
     currentRep = null;
     standingPeak = null;
+    lastValidTimestampMs = null;
+    waitingForStand = true;
     reps.length = 0;
   }
 
