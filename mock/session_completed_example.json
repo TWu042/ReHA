@@ -6,19 +6,601 @@
       "rom": 78.1,
       "durationMs": 1567,
       "minKneeAngle": 91.6,
-      "maxKneeAngle": 169.7
+      "maxKneeAngle": 169.7,
+      "samples": [
+        {
+          "timestampMs": 300,
+          "kneeAngleDeg": 159.25
+        },
+        {
+          "timestampMs": 333,
+          "kneeAngleDeg": 156.5
+        },
+        {
+          "timestampMs": 367,
+          "kneeAngleDeg": 153.5
+        },
+        {
+          "timestampMs": 400,
+          "kneeAngleDeg": 150
+        },
+        {
+          "timestampMs": 433,
+          "kneeAngleDeg": 146.8
+        },
+        {
+          "timestampMs": 467,
+          "kneeAngleDeg": 142.83
+        },
+        {
+          "timestampMs": 500,
+          "kneeAngleDeg": 138.9
+        },
+        {
+          "timestampMs": 533,
+          "kneeAngleDeg": 134.93
+        },
+        {
+          "timestampMs": 567,
+          "kneeAngleDeg": 130.8
+        },
+        {
+          "timestampMs": 600,
+          "kneeAngleDeg": 126.84
+        },
+        {
+          "timestampMs": 633,
+          "kneeAngleDeg": 122.85
+        },
+        {
+          "timestampMs": 667,
+          "kneeAngleDeg": 118.81
+        },
+        {
+          "timestampMs": 700,
+          "kneeAngleDeg": 114.93
+        },
+        {
+          "timestampMs": 733,
+          "kneeAngleDeg": 111.23
+        },
+        {
+          "timestampMs": 767,
+          "kneeAngleDeg": 107.73
+        },
+        {
+          "timestampMs": 800,
+          "kneeAngleDeg": 104.72
+        },
+        {
+          "timestampMs": 833,
+          "kneeAngleDeg": 102.07
+        },
+        {
+          "timestampMs": 867,
+          "kneeAngleDeg": 99.69
+        },
+        {
+          "timestampMs": 900,
+          "kneeAngleDeg": 97.23
+        },
+        {
+          "timestampMs": 933,
+          "kneeAngleDeg": 95.15
+        },
+        {
+          "timestampMs": 967,
+          "kneeAngleDeg": 93.52
+        },
+        {
+          "timestampMs": 1000,
+          "kneeAngleDeg": 92.61
+        },
+        {
+          "timestampMs": 1033,
+          "kneeAngleDeg": 91.83
+        },
+        {
+          "timestampMs": 1067,
+          "kneeAngleDeg": 91.59
+        },
+        {
+          "timestampMs": 1100,
+          "kneeAngleDeg": 91.81
+        },
+        {
+          "timestampMs": 1133,
+          "kneeAngleDeg": 92.37
+        },
+        {
+          "timestampMs": 1167,
+          "kneeAngleDeg": 93.19
+        },
+        {
+          "timestampMs": 1200,
+          "kneeAngleDeg": 94.9
+        },
+        {
+          "timestampMs": 1233,
+          "kneeAngleDeg": 96.4
+        },
+        {
+          "timestampMs": 1267,
+          "kneeAngleDeg": 98.35
+        },
+        {
+          "timestampMs": 1300,
+          "kneeAngleDeg": 100.6
+        },
+        {
+          "timestampMs": 1333,
+          "kneeAngleDeg": 103.3
+        },
+        {
+          "timestampMs": 1367,
+          "kneeAngleDeg": 106.51
+        },
+        {
+          "timestampMs": 1400,
+          "kneeAngleDeg": 109.65
+        },
+        {
+          "timestampMs": 1433,
+          "kneeAngleDeg": 113.18
+        },
+        {
+          "timestampMs": 1467,
+          "kneeAngleDeg": 116.78
+        },
+        {
+          "timestampMs": 1500,
+          "kneeAngleDeg": 120.82
+        },
+        {
+          "timestampMs": 1533,
+          "kneeAngleDeg": 124.81
+        },
+        {
+          "timestampMs": 1567,
+          "kneeAngleDeg": 128.65
+        },
+        {
+          "timestampMs": 1600,
+          "kneeAngleDeg": 132.78
+        },
+        {
+          "timestampMs": 1633,
+          "kneeAngleDeg": 137.03
+        },
+        {
+          "timestampMs": 1667,
+          "kneeAngleDeg": 141.05
+        },
+        {
+          "timestampMs": 1700,
+          "kneeAngleDeg": 144.67
+        },
+        {
+          "timestampMs": 1733,
+          "kneeAngleDeg": 148.39
+        },
+        {
+          "timestampMs": 1767,
+          "kneeAngleDeg": 151.7
+        },
+        {
+          "timestampMs": 1800,
+          "kneeAngleDeg": 155.22
+        },
+        {
+          "timestampMs": 1833,
+          "kneeAngleDeg": 158.22
+        },
+        {
+          "timestampMs": 1867,
+          "kneeAngleDeg": 160.85
+        }
+      ]
     },
     {
       "rom": 78.9,
       "durationMs": 1567,
       "minKneeAngle": 91.3,
-      "maxKneeAngle": 170.2
+      "maxKneeAngle": 170.2,
+      "samples": [
+        {
+          "timestampMs": 3300,
+          "kneeAngleDeg": 159.51
+        },
+        {
+          "timestampMs": 3333,
+          "kneeAngleDeg": 156.58
+        },
+        {
+          "timestampMs": 3367,
+          "kneeAngleDeg": 153.3
+        },
+        {
+          "timestampMs": 3400,
+          "kneeAngleDeg": 149.9
+        },
+        {
+          "timestampMs": 3433,
+          "kneeAngleDeg": 146.37
+        },
+        {
+          "timestampMs": 3467,
+          "kneeAngleDeg": 142.98
+        },
+        {
+          "timestampMs": 3500,
+          "kneeAngleDeg": 139.21
+        },
+        {
+          "timestampMs": 3533,
+          "kneeAngleDeg": 134.93
+        },
+        {
+          "timestampMs": 3567,
+          "kneeAngleDeg": 130.87
+        },
+        {
+          "timestampMs": 3600,
+          "kneeAngleDeg": 127.04
+        },
+        {
+          "timestampMs": 3633,
+          "kneeAngleDeg": 123.2
+        },
+        {
+          "timestampMs": 3667,
+          "kneeAngleDeg": 119.07
+        },
+        {
+          "timestampMs": 3700,
+          "kneeAngleDeg": 115.3
+        },
+        {
+          "timestampMs": 3733,
+          "kneeAngleDeg": 111.69
+        },
+        {
+          "timestampMs": 3767,
+          "kneeAngleDeg": 108.42
+        },
+        {
+          "timestampMs": 3800,
+          "kneeAngleDeg": 105.33
+        },
+        {
+          "timestampMs": 3833,
+          "kneeAngleDeg": 102.3
+        },
+        {
+          "timestampMs": 3867,
+          "kneeAngleDeg": 99.62
+        },
+        {
+          "timestampMs": 3900,
+          "kneeAngleDeg": 97.15
+        },
+        {
+          "timestampMs": 3933,
+          "kneeAngleDeg": 95.12
+        },
+        {
+          "timestampMs": 3967,
+          "kneeAngleDeg": 93.5
+        },
+        {
+          "timestampMs": 4000,
+          "kneeAngleDeg": 92.39
+        },
+        {
+          "timestampMs": 4033,
+          "kneeAngleDeg": 91.67
+        },
+        {
+          "timestampMs": 4067,
+          "kneeAngleDeg": 91.3
+        },
+        {
+          "timestampMs": 4100,
+          "kneeAngleDeg": 91.52
+        },
+        {
+          "timestampMs": 4133,
+          "kneeAngleDeg": 92.07
+        },
+        {
+          "timestampMs": 4167,
+          "kneeAngleDeg": 93.02
+        },
+        {
+          "timestampMs": 4200,
+          "kneeAngleDeg": 94.5
+        },
+        {
+          "timestampMs": 4233,
+          "kneeAngleDeg": 96.14
+        },
+        {
+          "timestampMs": 4267,
+          "kneeAngleDeg": 98.51
+        },
+        {
+          "timestampMs": 4300,
+          "kneeAngleDeg": 100.76
+        },
+        {
+          "timestampMs": 4333,
+          "kneeAngleDeg": 103.82
+        },
+        {
+          "timestampMs": 4367,
+          "kneeAngleDeg": 106.72
+        },
+        {
+          "timestampMs": 4400,
+          "kneeAngleDeg": 110.07
+        },
+        {
+          "timestampMs": 4433,
+          "kneeAngleDeg": 113.36
+        },
+        {
+          "timestampMs": 4467,
+          "kneeAngleDeg": 116.81
+        },
+        {
+          "timestampMs": 4500,
+          "kneeAngleDeg": 120.88
+        },
+        {
+          "timestampMs": 4533,
+          "kneeAngleDeg": 125.01
+        },
+        {
+          "timestampMs": 4567,
+          "kneeAngleDeg": 128.88
+        },
+        {
+          "timestampMs": 4600,
+          "kneeAngleDeg": 133.24
+        },
+        {
+          "timestampMs": 4633,
+          "kneeAngleDeg": 137.25
+        },
+        {
+          "timestampMs": 4667,
+          "kneeAngleDeg": 141.14
+        },
+        {
+          "timestampMs": 4700,
+          "kneeAngleDeg": 144.83
+        },
+        {
+          "timestampMs": 4733,
+          "kneeAngleDeg": 148.52
+        },
+        {
+          "timestampMs": 4767,
+          "kneeAngleDeg": 152.03
+        },
+        {
+          "timestampMs": 4800,
+          "kneeAngleDeg": 155.38
+        },
+        {
+          "timestampMs": 4833,
+          "kneeAngleDeg": 158.25
+        },
+        {
+          "timestampMs": 4867,
+          "kneeAngleDeg": 160.89
+        }
+      ]
     },
     {
       "rom": 79,
       "durationMs": 1567,
       "minKneeAngle": 91.3,
-      "maxKneeAngle": 170.4
+      "maxKneeAngle": 170.4,
+      "samples": [
+        {
+          "timestampMs": 6300,
+          "kneeAngleDeg": 159.58
+        },
+        {
+          "timestampMs": 6333,
+          "kneeAngleDeg": 156.27
+        },
+        {
+          "timestampMs": 6367,
+          "kneeAngleDeg": 153.57
+        },
+        {
+          "timestampMs": 6400,
+          "kneeAngleDeg": 150.25
+        },
+        {
+          "timestampMs": 6433,
+          "kneeAngleDeg": 146.72
+        },
+        {
+          "timestampMs": 6467,
+          "kneeAngleDeg": 143.15
+        },
+        {
+          "timestampMs": 6500,
+          "kneeAngleDeg": 139.2
+        },
+        {
+          "timestampMs": 6533,
+          "kneeAngleDeg": 134.96
+        },
+        {
+          "timestampMs": 6567,
+          "kneeAngleDeg": 131.12
+        },
+        {
+          "timestampMs": 6600,
+          "kneeAngleDeg": 127.19
+        },
+        {
+          "timestampMs": 6633,
+          "kneeAngleDeg": 123.25
+        },
+        {
+          "timestampMs": 6667,
+          "kneeAngleDeg": 119.38
+        },
+        {
+          "timestampMs": 6700,
+          "kneeAngleDeg": 115.57
+        },
+        {
+          "timestampMs": 6733,
+          "kneeAngleDeg": 111.68
+        },
+        {
+          "timestampMs": 6767,
+          "kneeAngleDeg": 108.13
+        },
+        {
+          "timestampMs": 6800,
+          "kneeAngleDeg": 104.86
+        },
+        {
+          "timestampMs": 6833,
+          "kneeAngleDeg": 102.13
+        },
+        {
+          "timestampMs": 6867,
+          "kneeAngleDeg": 99.42
+        },
+        {
+          "timestampMs": 6900,
+          "kneeAngleDeg": 97.3
+        },
+        {
+          "timestampMs": 6933,
+          "kneeAngleDeg": 95.35
+        },
+        {
+          "timestampMs": 6967,
+          "kneeAngleDeg": 93.8
+        },
+        {
+          "timestampMs": 7000,
+          "kneeAngleDeg": 92.53
+        },
+        {
+          "timestampMs": 7033,
+          "kneeAngleDeg": 91.55
+        },
+        {
+          "timestampMs": 7067,
+          "kneeAngleDeg": 91.34
+        },
+        {
+          "timestampMs": 7100,
+          "kneeAngleDeg": 91.71
+        },
+        {
+          "timestampMs": 7133,
+          "kneeAngleDeg": 92.32
+        },
+        {
+          "timestampMs": 7167,
+          "kneeAngleDeg": 93.35
+        },
+        {
+          "timestampMs": 7200,
+          "kneeAngleDeg": 94.75
+        },
+        {
+          "timestampMs": 7233,
+          "kneeAngleDeg": 96.47
+        },
+        {
+          "timestampMs": 7267,
+          "kneeAngleDeg": 98.57
+        },
+        {
+          "timestampMs": 7300,
+          "kneeAngleDeg": 101.12
+        },
+        {
+          "timestampMs": 7333,
+          "kneeAngleDeg": 103.78
+        },
+        {
+          "timestampMs": 7367,
+          "kneeAngleDeg": 106.76
+        },
+        {
+          "timestampMs": 7400,
+          "kneeAngleDeg": 110.18
+        },
+        {
+          "timestampMs": 7433,
+          "kneeAngleDeg": 113.3
+        },
+        {
+          "timestampMs": 7467,
+          "kneeAngleDeg": 117.18
+        },
+        {
+          "timestampMs": 7500,
+          "kneeAngleDeg": 120.97
+        },
+        {
+          "timestampMs": 7533,
+          "kneeAngleDeg": 125.15
+        },
+        {
+          "timestampMs": 7567,
+          "kneeAngleDeg": 129.19
+        },
+        {
+          "timestampMs": 7600,
+          "kneeAngleDeg": 133.34
+        },
+        {
+          "timestampMs": 7633,
+          "kneeAngleDeg": 137.48
+        },
+        {
+          "timestampMs": 7667,
+          "kneeAngleDeg": 141.04
+        },
+        {
+          "timestampMs": 7700,
+          "kneeAngleDeg": 144.71
+        },
+        {
+          "timestampMs": 7733,
+          "kneeAngleDeg": 148.52
+        },
+        {
+          "timestampMs": 7767,
+          "kneeAngleDeg": 152.06
+        },
+        {
+          "timestampMs": 7800,
+          "kneeAngleDeg": 155.15
+        },
+        {
+          "timestampMs": 7833,
+          "kneeAngleDeg": 157.9
+        },
+        {
+          "timestampMs": 7867,
+          "kneeAngleDeg": 160.9
+        }
+      ]
     }
   ],
   "baselineROM": null,
