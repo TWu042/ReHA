@@ -23,8 +23,9 @@
 
 ```js
 // pose_frame
-{ timestampMs, landmarks, valid }
+{ timestampMs, landmarks, valid, aspectRatio }
 // landmarks 永远长度 33；每项为 { x, y, z, visibility } 或 null。
+// aspectRatio 为视频宽 ÷ 高（如 640×480 为 4/3），视频尺寸未知时为 null。算角度时 x 要乘以它。
 // valid 为 true 时全部 33 点均完整，必要点质量达标。
 // tracking_lost：进入无效状态时触发一次，包括启动后首次检测无效
 { timestampMs, reason }

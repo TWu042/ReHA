@@ -22,10 +22,21 @@ export function createPoseTracker(videoEl, {
   let lastStaleAt = 0
   let lost = false
 
+  // 视频宽 ÷ 高。x、y 分别按宽、高归一化，算角度时要用它把 x 换回同一尺度；尺寸未知时为 null。
+  function currentAspectRatio() {
+    const { videoWidth: w, videoHeight: h } = videoEl
+    return w > 0 && h > 0 ? w / h : null
+  }
+
   function publish(detected, timestampMs, reasonOverride) {
     const result = assessPose(detected, quality)
     const reason = reasonOverride || result.reason
-    const frame = { timestampMs, landmarks: result.landmarks, valid: result.valid && !reasonOverride }
+    const frame = {
+      timestampMs,
+      landmarks: result.landmarks,
+      valid: result.valid && !reasonOverride,
+      aspectRatio: currentAspectRatio(),
+    }
     bus.emit(EVENTS.POSE_FRAME, frame)
     if (!frame.valid && !lost) {
       lost = true

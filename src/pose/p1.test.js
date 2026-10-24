@@ -148,6 +148,20 @@ test('视频冻结发布无效帧，不拿上一次坐标冒充有效检测', as
   assert.equal(h.bus.events.filter(e => e.type === EVENTS.POSE_FRAME).at(-1).payload.valid, true)
 })
 
+test('pose_frame 带视频宽高比；尺寸未知时为 null', async t => {
+  const h = harness(t)
+  await h.tracker.start()
+  const lastFrame = () => h.bus.events.filter(e => e.type === EVENTS.POSE_FRAME).at(-1).payload
+  h.step()
+  assert.equal(lastFrame().aspectRatio, null)
+  Object.assign(h.video, { videoWidth: 640, videoHeight: 480 })
+  h.step()
+  assert.equal(lastFrame().aspectRatio, 640 / 480)
+  Object.assign(h.video, { videoWidth: 1280, videoHeight: 720 })
+  h.step()
+  assert.equal(lastFrame().aspectRatio, 1280 / 720)
+})
+
 test('初始化期间停止会关闭晚到模型；失败后可重试', async t => {
   const h = harness(t)
   let resolve
