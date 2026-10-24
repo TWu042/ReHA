@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { eventBus } from '../src/shared/eventBus.js';
 import { EVENTS } from '../src/shared/contracts.js';
-import { startMovement, stopMovement } from '../src/movement/movementModule.js';
+import { startMovement, stopMovement, getMovementState } from '../src/movement/movementModule.js';
 
 const MOCK_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'mock');
 const load = name => JSON.parse(readFileSync(join(MOCK_DIR, name), 'utf8'));
@@ -30,10 +30,22 @@ eventBus.on(EVENTS.FORM_FEEDBACK, e => feedbackEvents.push(e));
 // 1. 没开始就结束：不发事件
 check('没开始时 stopMovement 返回 null', stopMovement() === null);
 
-// 2. 标准深蹲 3 次
+// 2. 标准深蹲 3 次（顺便检查 getMovementState）
+check('没开始时 getMovementState 返回 null', getMovementState() === null);
 startMovement();
-for (const f of load('synthetic_squat.json')) eventBus.emit(EVENTS.POSE_FRAME, f);
+const s0 = getMovementState();
+check('刚开始：0 次、等待站直、还没有角度',
+  s0.repCount === 0 && s0.waitingForStand === true && s0.smoothedAngle === null);
+const squatFrames = load('synthetic_squat.json');
+squatFrames.slice(0, 45).forEach(f => eventBus.emit(EVENTS.POSE_FRAME, f));   // 蹲到一半左右
+const s1 = getMovementState();
+check('蹲到一半：不再等待站直，有角度，阶段不是站立',
+  s1.waitingForStand === false && s1.smoothedAngle < 160 && s1.phase !== 'STANDING',
+  `${s1.phase} ${Math.round(s1.smoothedAngle)}°`);
+squatFrames.slice(45).forEach(f => eventBus.emit(EVENTS.POSE_FRAME, f));
+check('做完：getMovementState 的次数为 3', getMovementState().repCount === 3);
 const result = stopMovement();
+check('结束后 getMovementState 返回 null', getMovementState() === null);
 
 check('rep_completed 发了 3 次', repEvents.length === 3, `实际 ${repEvents.length} 次`);
 check('repCount 依次是 1、2、3', repEvents.map(e => e.repCount).join() === '1,2,3');
