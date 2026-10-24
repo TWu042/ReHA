@@ -1,0 +1,79 @@
+// 模块 2 对外入口：把 repCounter 接上 eventBus。
+//
+//   startMovement()  开始一次训练：订阅 pose_frame，每完成一次深蹲发 rep_completed
+//   stopMovement()   结束训练：取消订阅，发 session_completed（带 MovementResult），并返回同一份结果
+//
+// 用法（P5 训练页）：
+//   import { startMovement, stopMovement } from '../movement/movementModule.js';
+//   点"开始"时 startMovement()，点"结束"时 stopMovement()。
+
+import { eventBus } from '../shared/eventBus.js';
+import { EVENTS } from '../shared/contracts.js';
+import { createRepCounter } from './repCounter.js';
+
+const round1 = x => Math.round(x * 10) / 10;
+
+let counter = null;
+let unsubscribe = null;
+let framesTotal = 0;   // 收到的帧数
+let framesUsed = 0;    // 有效、能算出膝角的帧数
+
+function handlePoseFrame(poseFrame) {
+  framesTotal++;
+  const result = counter.processFrame(poseFrame);
+  if (!result) return;
+  framesUsed++;
+
+  const rep = result.completedRep;
+  if (rep) {
+    eventBus.emit(EVENTS.REP_COMPLETED, {
+      type: EVENTS.REP_COMPLETED,
+      timestampMs: rep.endTimestampMs,
+      repCount: rep.repCount,
+      rom: round1(rep.romDeg),
+    });
+  }
+}
+
+/**
+ * 开始一次训练。正在训练时再调用，会先结束上一次（不发 session_completed），重新开始。
+ * @param {object} [options]  原样传给 createRepCounter，例如 { aspectRatio: 16 / 9 }
+ */
+export function startMovement(options = {}) {
+  if (unsubscribe) unsubscribe();
+  counter = createRepCounter(options);
+  framesTotal = 0;
+  framesUsed = 0;
+  unsubscribe = eventBus.on(EVENTS.POSE_FRAME, handlePoseFrame);
+}
+
+/**
+ * 结束训练，发出 session_completed。没有在训练时调用返回 null，不发事件。
+ * @returns {object|null} MovementResult（格式见 OPERATIONS.md 第 8.2 节）
+ */
+export function stopMovement() {
+  if (!unsubscribe) return null;
+  unsubscribe();
+  unsubscribe = null;
+
+  const { repCount, reps } = counter.getState();
+  const result = {
+    exercise: 'squat',
+    repCount,
+    reps: reps.map(r => ({
+      rom: round1(r.romDeg),
+      durationMs: r.durationMs,
+      minKneeAngle: round1(r.minKneeAngle),
+      maxKneeAngle: round1(r.maxKneeAngle),
+    })),
+    // 基线 ROM 需要历史训练记录才能算，本模块拿不到，所以按规则用 null，由 P3 根据历史数据填
+    baselineROM: null,
+    averageROM: reps.length ? round1(reps.reduce((s, r) => s + r.romDeg, 0) / reps.length) : null,
+    // 能用的帧占收到的帧的比例（0–1）；一帧都没收到时为 null
+    trackingQuality: framesTotal ? Math.round((framesUsed / framesTotal) * 100) / 100 : null,
+  };
+
+  counter = null;
+  eventBus.emit(EVENTS.SESSION_COMPLETED, result);
+  return result;
+}
