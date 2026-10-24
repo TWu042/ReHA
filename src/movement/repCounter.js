@@ -15,7 +15,7 @@
 // 这样用户蹲着出框、回来再站起，不会被多算一次。
 
 import { PHASE } from '../shared/contracts.js';
-import { kneeAngleDeg } from './angles.js';
+import { getPoseAngles } from './poseAngles.js';
 import * as CONFIG from './config.js';
 
 /**
@@ -23,8 +23,9 @@ import * as CONFIG from './config.js';
  * @param {number} [options.aspectRatio=1]  视频宽 ÷ 高。PoseFrame 里有 aspectRatio 字段时优先用它。
  * @param {object} [options.config]         覆盖 config.js 里的阈值，调参用，例如 { STAND_ANGLE: 155 }
  */
-export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
-  const cfg = { ...CONFIG, ...config };
+export function createRepCounter({ aspectRatio = 1, config = {}, angleMode = 'auto' } = {}) {
+  let cfg = { ...CONFIG, ...config };
+  let angleSource = null;
 
   let phase = PHASE.STANDING;
   let smoothedAngle = null;
@@ -67,11 +68,20 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
   function processFrame(poseFrame) {
     if (!poseFrame || poseFrame.valid === false) return null;
 
-    const ratio = poseFrame.aspectRatio ?? aspectRatio;
-    const raw = kneeAngleDeg(poseFrame.landmarks, ratio);
-    if (raw == null) return null;
-
     const t = poseFrame.timestampMs;
+    if (!Number.isFinite(t) || (lastValidTimestampMs != null && t <= lastValidTimestampMs)) return null;
+    const angles = getPoseAngles(poseFrame, { mode: angleSource ?? angleMode, aspectRatio });
+    const raw = angles.kneeAngleDeg;
+    if (raw == null) return null;
+    if (angleSource == null) {
+      angleSource = angles.source;
+      if (angleSource === '3d') {
+        cfg = { ...cfg,
+          BOTTOM_ENTER_ANGLE: config.BOTTOM_ENTER_ANGLE ?? cfg.WORLD_BOTTOM_ENTER_ANGLE,
+          BOTTOM_EXIT_ANGLE: config.BOTTOM_EXIT_ANGLE ?? cfg.WORLD_BOTTOM_EXIT_ANGLE,
+        };
+      }
+    }
     let completedRep = null;
     let abortedRep = null;
 
@@ -148,6 +158,7 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
   function getState() {
     return {
       phase,
+      angleSource,
       repCount,
       smoothedAngle,
       waitingForStand,
@@ -167,6 +178,8 @@ export function createRepCounter({ aspectRatio = 1, config = {} } = {}) {
     standingPeak = null;
     lastValidTimestampMs = null;
     waitingForStand = true;
+    angleSource = null;
+    cfg = { ...CONFIG, ...config };
     reps.length = 0;
   }
 

@@ -8,7 +8,7 @@ import { createRecorder } from '../pose/recorder.js';
 import { eventBus } from '../shared/eventBus.js';
 import { EVENTS, LM, PHASE } from '../shared/contracts.js';
 import { startMovement, stopMovement, getMovementState } from './movementModule.js';
-import { STAND_ANGLE, BOTTOM_ENTER_ANGLE, BOTTOM_EXIT_ANGLE } from './config.js';
+import { STAND_ANGLE, BOTTOM_ENTER_ANGLE, BOTTOM_EXIT_ANGLE, WORLD_BOTTOM_ENTER_ANGLE, WORLD_BOTTOM_EXIT_ANGLE } from './config.js';
 
 const $ = id => document.getElementById(id);
 const videoEl = $('video');
@@ -231,8 +231,8 @@ function drawChart() {
 
   const lines = [
     [STAND_ANGLE, '#2f9e44', `站直 ${STAND_ANGLE}°`],
-    [BOTTOM_EXIT_ANGLE, '#e8590c', `离开底部 ${BOTTOM_EXIT_ANGLE}°`],
-    [BOTTOM_ENTER_ANGLE, '#c92a2a', `进入底部 ${BOTTOM_ENTER_ANGLE}°`],
+    [getMovementState()?.angleSource === '3d' ? WORLD_BOTTOM_EXIT_ANGLE : BOTTOM_EXIT_ANGLE, '#e8590c', '离开底部'],
+    [getMovementState()?.angleSource === '3d' ? WORLD_BOTTOM_ENTER_ANGLE : BOTTOM_ENTER_ANGLE, '#c92a2a', '进入底部'],
   ];
   ctx.font = '12px system-ui, sans-serif';
   ctx.setLineDash([5, 4]);
@@ -241,7 +241,7 @@ function drawChart() {
     ctx.strokeStyle = color;
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.moveTo(0, y(a)); ctx.lineTo(w, y(a)); ctx.stroke();
-    ctx.fillText(label, 4, y(a) - 3);
+    ctx.fillText(`${label} (${a}°)`, 4, y(a) - 3);
   }
   ctx.setLineDash([]);
 
@@ -263,7 +263,7 @@ function drawChart() {
 function drawStats() {
   const s = getMovementState();
   $('reps').textContent = s ? s.repCount : lastCount;
-  $('angle').textContent = s?.smoothedAngle != null ? `${Math.round(s.smoothedAngle)}°` : '--';
+  $('angle').textContent = s?.smoothedAngle != null ? `${Math.round(s.smoothedAngle)}° (${s.angleSource})` : '--';
   $('phase').textContent = s ? PHASE_TEXT[s.phase] : '--';
 
   const banner = $('banner');

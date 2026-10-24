@@ -1,7 +1,7 @@
 import { EVENTS } from '../shared/contracts.js'
 import { eventBus } from '../shared/eventBus.js'
 import { QUALITY } from './config.js'
-import { assessPose } from './quality.js'
+import { assessPose, copyLandmarks } from './quality.js'
 
 export function createPoseTracker(videoEl, {
   bus = eventBus,
@@ -28,7 +28,7 @@ export function createPoseTracker(videoEl, {
     return w > 0 && h > 0 ? w / h : null
   }
 
-  function publish(detected, timestampMs, reasonOverride) {
+  function publish(detected, timestampMs, reasonOverride, worldDetected) {
     const result = assessPose(detected, quality)
     const reason = reasonOverride || result.reason
     const frame = {
@@ -36,6 +36,8 @@ export function createPoseTracker(videoEl, {
       landmarks: result.landmarks,
       valid: result.valid && !reasonOverride,
       aspectRatio: currentAspectRatio(),
+      // 世界坐标以米为单位，不能把归一化图像 z 当作它。
+      worldLandmarks: copyLandmarks(worldDetected),
     }
     bus.emit(EVENTS.POSE_FRAME, frame)
     if (!frame.valid && !lost) {
@@ -70,7 +72,7 @@ export function createPoseTracker(videoEl, {
         lastFreshAt = now
         const timestampMs = nextTimestamp(now)
         const result = poseLandmarker.detectForVideo(videoEl, timestampMs)
-        publish(result.landmarks?.[0], timestampMs)
+        publish(result.landmarks?.[0], timestampMs, null, result.worldLandmarks?.[0])
       } else if (now - lastFreshAt >= quality.staleAfterMs && now - lastStaleAt >= quality.staleAfterMs) {
         // 冻结/断开的摄像头不能让消费者一直使用最后一个有效姿态。
         lastStaleAt = now

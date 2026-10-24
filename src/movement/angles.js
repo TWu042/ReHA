@@ -50,6 +50,10 @@ export function pickSide(landmarks) {
   const leftVisibility = averageVisibility(landmarks, LEFT);
   const rightVisibility = averageVisibility(landmarks, RIGHT);
 
+  const leftValid = Object.values(LEFT).every(i => isValidPoint(landmarks[i]));
+  const rightValid = Object.values(RIGHT).every(i => isValidPoint(landmarks[i]));
+  if (leftValid !== rightValid) return leftValid ? "left" : "right";
+
   return leftVisibility >= rightVisibility
     ? "left"
     : "right";

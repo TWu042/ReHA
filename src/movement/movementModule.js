@@ -23,6 +23,8 @@ let unsubscribe = null;
 let framesTotal = 0;   // 收到的帧数
 let framesUsed = 0;    // 有效、能算出膝角的帧数
 let lastResult = null; // 最近一个有效帧的计数结果，给 getMovementState 用
+let feedbackUnsubscribe = null;
+let formFeedback = [];
 
 function handlePoseFrame(poseFrame) {
   framesTotal++;
@@ -50,12 +52,17 @@ function handlePoseFrame(poseFrame) {
  */
 export function startMovement(options = {}) {
   if (unsubscribe) unsubscribe();
+  feedbackUnsubscribe?.();
   counter = createRepCounter(options);
   framesTotal = 0;
   framesUsed = 0;
   lastResult = null;
+  formFeedback = [];
+  feedbackUnsubscribe = eventBus.on(EVENTS.FORM_FEEDBACK, feedback => {
+    formFeedback.push({ ...feedback });
+  });
   unsubscribe = eventBus.on(EVENTS.POSE_FRAME, handlePoseFrame);
-  startFormFeedback();
+  startFormFeedback(options);
 }
 
 /**
@@ -73,6 +80,7 @@ export function getMovementState() {
     kneeAngleDeg: lastResult?.kneeAngleDeg ?? null,
     smoothedAngle: lastResult?.smoothedAngle ?? null,
     waitingForStand,
+    angleSource: counter.getState().angleSource,
   };
 }
 
@@ -85,6 +93,8 @@ export function stopMovement() {
   unsubscribe();
   unsubscribe = null;
   stopFormFeedback();
+  feedbackUnsubscribe?.();
+  feedbackUnsubscribe = null;
 
   const { repCount, reps } = counter.getState();
   const result = {
@@ -104,6 +114,9 @@ export function stopMovement() {
     averageROM: reps.length ? round1(reps.reduce((s, r) => s + r.romDeg, 0) / reps.length) : null,
     // 能用的帧占收到的帧的比例（0–1）；一帧都没收到时为 null
     trackingQuality: framesTotal ? Math.round((framesUsed / framesTotal) * 100) / 100 : null,
+    // 原始错误事件交给 P3；不在此擅自规定扣分权重。
+    formFeedback: formFeedback.map(feedback => ({ ...feedback })),
+    angleSource: counter.getState().angleSource,
   };
 
   counter = null;

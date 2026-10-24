@@ -87,6 +87,8 @@ const displayTimer = setInterval(() => {
     timestampMs: latestFrame.timestampMs,
     valid: latestFrame.valid,
     landmarksLength: latestFrame.landmarks.length,
+    worldLandmarksLength: latestFrame.worldLandmarks?.length ?? 0,
+    worldRequiredLandmarks: Object.fromEntries(Object.entries(LM).map(([name, i]) => [name, latestFrame.worldLandmarks?.[i] ?? null])),
     recording: recorder.isRecording,
     recordedFrames: recorder.frameCount,
     lastTrackingLost: lastLost,

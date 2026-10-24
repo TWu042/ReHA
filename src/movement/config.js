@@ -7,3 +7,7 @@ export const BOTTOM_EXIT_ANGLE = 143;    // 膝角高于这个值才离开底部
 export const MIN_REP_DURATION_MS = 800;  // 一次动作短于这个时长不计数（防抖动误计）
 export const SMOOTHING_ALPHA = 0.3;      // 膝角指数平滑系数，越小越平滑、越滞后
 export const TRACKING_GAP_MS = 1500;     // 丢失追踪超过这个时长，放弃正在做的这一次，要先站直才继续计数
+
+// 三维世界坐标专用工程初始值，尚无真人三维录制校准，不是医疗标准。
+export const WORLD_BOTTOM_ENTER_ANGLE = 120;
+export const WORLD_BOTTOM_EXIT_ANGLE = 130;
