@@ -1,5 +1,5 @@
 /* global process */
-// 深蹲计数测试：读 mock/ 里 5 份假数据，逐帧喂给计数器，对比期望次数。
+// 深蹲计数测试：读 mock/ 里的假数据，逐帧喂给计数器，对比期望次数。
 //
 // 运行：node tests/repCounter.test.js
 // 假数据不存在时先运行：node mock/generateSquat.js
@@ -19,17 +19,19 @@ const CASES = [
   { file: 'pause_at_bottom.json', expected: 3 },
   { file: 'half_rep.json',        expected: 0 },
   { file: 'tracking_lost.json',   expected: 3 },
+  { file: 'lost_at_bottom.json',  expected: 1 },   // 蹲着出框、站着回来，不能多算
+  { file: 'lost_return_crouched.json', expected: 1 },   // 蹲着出框、蹲着回来再站起，不能多算
 ];
 
 let failed = 0;
-console.log(`${'文件名'.padEnd(20)}  期望  实际  结果`);
-console.log('-'.repeat(42));
+console.log(`${'文件名'.padEnd(24)}  期望  实际  结果`);
+console.log('-'.repeat(46));
 
 for (const { file, expected } of CASES) {
   const path = join(MOCK_DIR, file);
   if (!existsSync(path)) {
     failed++;
-    console.log(`${file.padEnd(23)} ${String(expected).padStart(3)}     -  缺少文件，先运行 node mock/generateSquat.js`);
+    console.log(`${file.padEnd(27)} ${String(expected).padStart(3)}     -  缺少文件，先运行 node mock/generateSquat.js`);
     continue;
   }
 
@@ -39,9 +41,9 @@ for (const { file, expected } of CASES) {
   const pass = actual === expected;
   if (!pass) failed++;
 
-  console.log(`${file.padEnd(23)} ${String(expected).padStart(3)}  ${String(actual).padStart(4)}  ${pass ? '✓ 通过' : '✗ 失败'}`);
+  console.log(`${file.padEnd(27)} ${String(expected).padStart(3)}  ${String(actual).padStart(4)}  ${pass ? '✓ 通过' : '✗ 失败'}`);
 }
 
-console.log('-'.repeat(42));
+console.log('-'.repeat(46));
 console.log(failed === 0 ? `全部通过（${CASES.length}/${CASES.length}）` : `${failed} 项失败`);
 process.exitCode = failed === 0 ? 0 : 1;
