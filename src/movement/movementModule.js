@@ -22,12 +22,14 @@ let counter = null;
 let unsubscribe = null;
 let framesTotal = 0;   // 收到的帧数
 let framesUsed = 0;    // 有效、能算出膝角的帧数
+let lastResult = null; // 最近一个有效帧的计数结果，给 getMovementState 用
 
 function handlePoseFrame(poseFrame) {
   framesTotal++;
   const result = counter.processFrame(poseFrame);
   if (!result) return;
   framesUsed++;
+  lastResult = result;
 
   if (result.abortedRep) handleAbortedRep(result.abortedRep);
 
@@ -51,8 +53,27 @@ export function startMovement(options = {}) {
   counter = createRepCounter(options);
   framesTotal = 0;
   framesUsed = 0;
+  lastResult = null;
   unsubscribe = eventBus.on(EVENTS.POSE_FRAME, handlePoseFrame);
   startFormFeedback();
+}
+
+/**
+ * 当前训练的实时状态，给页面显示用（例如"请先站直"、当前阶段）。不在训练时返回 null。
+ * 页面按自己的节奏读取（比如每个动画帧读一次），不要把它放进每帧都更新的 React state。
+ * @returns {{ phase, repCount, kneeAngleDeg, smoothedAngle, waitingForStand } | null}
+ *   kneeAngleDeg / smoothedAngle 为最近一个有效帧的原始 / 平滑膝角，还没有有效帧时为 null
+ */
+export function getMovementState() {
+  if (!unsubscribe) return null;
+  const { phase, repCount, waitingForStand } = counter.getState();
+  return {
+    phase,
+    repCount,
+    kneeAngleDeg: lastResult?.kneeAngleDeg ?? null,
+    smoothedAngle: lastResult?.smoothedAngle ?? null,
+    waitingForStand,
+  };
 }
 
 /**
@@ -86,6 +107,7 @@ export function stopMovement() {
   };
 
   counter = null;
+  lastResult = null;
   eventBus.emit(EVENTS.SESSION_COMPLETED, result);
   return result;
 }

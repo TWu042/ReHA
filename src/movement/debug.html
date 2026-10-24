@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>P2 深蹲计数实时测试</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { max-width: 1200px; margin: 16px auto; padding: 0 16px; font: 15px/1.5 system-ui, sans-serif; color: #1d2733; background: #f6f8fa; }
+      h1 { font-size: 20px; margin: 0 0 4px; }
+      h2 { font-size: 15px; margin: 0 0 8px; color: #52606d; }
+      .hint { color: #52606d; margin: 0 0 12px; }
+      .layout { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 16px; }
+      @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+      .card { background: #fff; border: 1px solid #dde3ea; border-radius: 10px; padding: 12px; margin-bottom: 16px; }
+      .stage { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #18222b; border-radius: 8px; overflow: hidden; transform: scaleX(-1); }
+      .stage video, .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+      .stat .value { font-size: 40px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .stat .label { color: #52606d; font-size: 13px; }
+      #banner { margin-top: 10px; padding: 8px 10px; border-radius: 6px; font-weight: 600; min-height: 40px; }
+      #banner.ok { background: #e6f4ea; color: #1e6b34; }
+      #banner.warn { background: #fff4e5; color: #8a4b00; }
+      #banner.bad { background: #fdecea; color: #a1281c; }
+      #chart { width: 100%; height: 200px; display: block; }
+      button { padding: 7px 12px; margin: 4px 4px 4px 0; font: inherit; border: 1px solid #b8c2cc; border-radius: 6px; background: #fff; cursor: pointer; }
+      button.primary { background: #1d5fd1; border-color: #1d5fd1; color: #fff; }
+      button:disabled { opacity: .5; cursor: default; }
+      input { padding: 6px 8px; font: inherit; border: 1px solid #b8c2cc; border-radius: 6px; width: 7em; }
+      #log { max-height: 240px; overflow-y: auto; margin: 0; padding-left: 18px; font-size: 14px; }
+      #status { min-height: 1.5em; }
+      .row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    </style>
+  </head>
+  <body>
+    <h1>P2 深蹲计数实时测试</h1>
+    <p class="hint">
+      站在摄像头侧前方约 45°、2–3 米，全身入镜。画面已镜像显示，数据不镜像。视频只在本机处理，不上传。
+    </p>
+
+    <div class="layout">
+      <div>
+        <div class="card">
+          <div class="stage" id="stage">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="overlay"></canvas>
+          </div>
+          <p id="status" role="status">尚未启动。</p>
+          <div class="row">
+            <button id="start" class="primary">启动摄像头</button>
+            <button id="newRound" disabled>新一轮（清零）</button>
+            <button id="stop" disabled>停止</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>膝角曲线（最近 10 秒，平滑后）</h2>
+          <canvas id="chart"></canvas>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="stats">
+            <div class="stat"><div class="value" id="reps">0</div><div class="label">计数</div></div>
+            <div class="stat"><div class="value" id="angle">--</div><div class="label">膝角（平滑）</div></div>
+            <div class="stat"><div class="value" id="phase" style="font-size:24px;line-height:48px">--</div><div class="label">阶段</div></div>
+          </div>
+          <div id="banner" class="warn">点"启动摄像头"开始</div>
+        </div>
+
+        <div class="card">
+          <h2>准确率</h2>
+          <div class="row">
+            <label>实际做了 <input id="actual" type="number" min="0" placeholder="例如 10" /> 次</label>
+          </div>
+          <p id="accuracy" style="margin:8px 0 0">做完一轮后填入实际次数。</p>
+        </div>
+
+        <div class="card">
+          <h2>录制（给队友测试时顺便存数据，之后调参用）</h2>
+          <div class="row">
+            <input id="tester" type="text" placeholder="测试人" />
+            <button id="record" disabled>开始录制</button>
+            <button id="saveRecord" disabled>停止并下载</button>
+          </div>
+          <p class="hint" style="margin:6px 0 0">文件下载到浏览器的下载目录，放进仓库的 mock/，保留 p2_ 开头。</p>
+        </div>
+
+        <div class="card">
+          <h2>记录（最新的在上面）</h2>
+          <ol id="log" reversed></ol>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./debug.js"></script>
+  </body>
+</html>
