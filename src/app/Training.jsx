@@ -10,7 +10,24 @@ import {
 } from "../movement/movementModule.js";
 
 import { eventBus } from "../shared/eventBus.js";
-import { EVENTS } from "../shared/contracts.js";
+import { EVENTS, FEEDBACK } from "../shared/contracts.js";
+
+// tracking_lost 的原因 → 页面上显示的话
+const LOST_TEXT = {
+  no_person: "No one detected. Please step into the frame.",
+  incomplete_landmarks: "Your body isn't fully detected.",
+  low_visibility: "Can't see your whole body. Step back or improve the lighting.",
+  out_of_frame: "Part of your body is out of the frame. Please step back.",
+  video_stalled: "The camera feed paused.",
+  detection_error: "Pose detection error.",
+};
+
+// 纠错代码 → 页面上显示的话（P4 的原始提示是中文，界面是英文）
+const TIP_TEXT = {
+  [FEEDBACK.NOT_DEEP_ENOUGH]: "Squat a little lower.",
+  [FEEDBACK.LEANING_FORWARD]: "Lift your chest and keep your back straight.",
+};
+const TIP_DURATION_MS = 3000;
 
 export default function Training({ onFinish }) {
   const videoRef = useRef(null);
@@ -19,6 +36,9 @@ export default function Training({ onFinish }) {
   const activeRef = useRef(false);
   const startingRef = useRef(false);
   const mountedRef = useRef(true);
+  const inFrameRef = useRef(null);       // 上一帧是否有效，只在变化时更新页面
+  const lostReasonRef = useRef(null);    // 最近一次丢失追踪的原因
+  const tipTimerRef = useRef(null);
 
   const [reps, setReps] = useState(0);
   const [status, setStatus] = useState("idle");
@@ -26,6 +46,9 @@ export default function Training({ onFinish }) {
     "Press Start Training to begin!"
   );
   const [error, setError] = useState("");
+  // null = 还没收到帧；{ inFrame: true } 或 { inFrame: false, reason }
+  const [tracking, setTracking] = useState(null);
+  const [formTip, setFormTip] = useState("");
 
   const target = 10;
 
@@ -46,25 +69,45 @@ export default function Training({ onFinish }) {
       }
     );
 
+    // 追踪状态单独显示，不写进 feedback，恢复后自动变回 "In the frame"
     const unsubscribeLost = eventBus.on(
       EVENTS.TRACKING_LOST,
       (data) => {
+        lostReasonRef.current = data.reason;
         if (!activeRef.current) return;
 
-        setFeedback(
-          `Tracking lost: ${data.reason}. Please stay in frame.`
-        );
+        inFrameRef.current = false;
+        setTracking({ inFrame: false, reason: data.reason });
       }
     );
 
+    // 每帧都会来，只在"有效 / 无效"切换时才更新页面
     const unsubscribePose = eventBus.on(
       EVENTS.POSE_FRAME,
       (frame) => {
         if (!activeRef.current) return;
+        if (frame.valid === inFrameRef.current) return;
 
+        inFrameRef.current = frame.valid;
         if (frame.valid) {
+          setTracking({ inFrame: true });
           setError("");
+        } else {
+          setTracking({ inFrame: false, reason: lostReasonRef.current });
         }
+      }
+    );
+
+    const unsubscribeFeedback = eventBus.on(
+      EVENTS.FORM_FEEDBACK,
+      (data) => {
+        if (!activeRef.current) return;
+
+        setFormTip(TIP_TEXT[data.code] || data.message);
+        clearTimeout(tipTimerRef.current);
+        tipTimerRef.current = setTimeout(() => {
+          if (mountedRef.current) setFormTip("");
+        }, TIP_DURATION_MS);
       }
     );
 
@@ -73,6 +116,8 @@ export default function Training({ onFinish }) {
       unsubscribeRep();
       unsubscribeLost();
       unsubscribePose();
+      unsubscribeFeedback();
+      clearTimeout(tipTimerRef.current);
 
       activeRef.current = false;
       startingRef.current = false;
@@ -91,6 +136,9 @@ export default function Training({ onFinish }) {
     setError("");
     setReps(0);
     setFeedback("Starting camera and pose tracking...");
+    inFrameRef.current = null;
+    setTracking(null);
+    setFormTip("");
 
     console.log("Starting ReHA training...");
 
@@ -165,6 +213,9 @@ export default function Training({ onFinish }) {
 
     setStatus("idle");
     setFeedback("Training complete!");
+    setTracking(null);
+    setFormTip("");
+    clearTimeout(tipTimerRef.current);
 
     console.log("Movement result:", result);
 
@@ -234,6 +285,25 @@ export default function Training({ onFinish }) {
             )}
           </div>
 
+          {isActive && (
+            <p
+              className={`tracking-indicator ${
+                tracking?.inFrame
+                  ? "in-frame"
+                  : tracking
+                  ? "out-of-frame"
+                  : ""
+              }`}
+              role="status"
+            >
+              {tracking?.inFrame
+                ? "● In the frame"
+                : tracking
+                ? `● ${LOST_TEXT[tracking.reason] || "Please stay in the frame."}`
+                : "● Looking for you..."}
+            </p>
+          )}
+
           {error && (
             <p style={{ color: "#b42318", marginTop: "12px" }}>
               {error}
@@ -272,6 +342,12 @@ export default function Training({ onFinish }) {
                 ? "Keep going, adventurer!"
                 : "Ready for your adventure?"}
             </h3>
+
+            {formTip && (
+              <p className="form-tip" role="alert">
+                ⚠ {formTip}
+              </p>
+            )}
 
             <p>{feedback}</p>
           </div>

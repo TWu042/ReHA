@@ -257,6 +257,34 @@ button {
   color: #6c819a;
 }
 
+.tracking-indicator {
+  margin: 12px 0 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  background: #eef2f7;
+  color: #6c819a;
+}
+
+.tracking-indicator.in-frame {
+  background: #e3f6ea;
+  color: #1e7a45;
+}
+
+.tracking-indicator.out-of-frame {
+  background: #fdecea;
+  color: #b42318;
+}
+
+.feedback-panel .form-tip {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #fff1d5;
+  color: #9a5b00;
+  font-weight: 700;
+}
+
 .training-sidebar {
   display: flex;
   flex-direction: column;
