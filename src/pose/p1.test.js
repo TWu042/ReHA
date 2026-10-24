@@ -38,12 +38,19 @@ test('质量：无人、缺项、非有限值、低可见度、边界和恢复',
   for (const i of Object.values(LM)) {
     const low = points()
     low[i].visibility = 0.49
+    // 一侧不可靠仍可用另一侧；两侧均不可靠才丢失。
+    low[i < 12 || i === 23 || i === 25 || i === 27 ? 12 : 11].visibility = 0.1
     assert.equal(assessPose(low).reason, 'low_visibility')
     low[i].visibility = 0.9
+    low[i < 12 || i === 23 || i === 25 || i === 27 ? 12 : 11].visibility = 0.9
     low[i].y = 1.1
+    low[i < 12 || i === 23 || i === 25 || i === 27 ? 12 : 11].y = 1.1
     assert.equal(assessPose(low).reason, 'out_of_frame')
   }
   assert.equal(assessPose(points()).valid, true)
+  const side = points()
+  for (const i of [12, 24, 26, 28]) side[i].visibility = 0.1
+  assert.equal(assessPose(side).valid, true)
 })
 
 test('录制：零起点、无效帧、深拷贝、停止/清空、数组导出与重复启动', () => {
@@ -146,6 +153,26 @@ test('视频冻结发布无效帧，不拿上一次坐标冒充有效检测', as
   assert.equal(h.model.detectForVideo.mock.callCount(), 1)
   h.step()
   assert.equal(h.bus.events.filter(e => e.type === EVENTS.POSE_FRAME).at(-1).payload.valid, true)
+})
+
+test('三维关键点逐帧复制并随录制导出，冻结帧不沿用三维数据', async t => {
+  const h = harness(t)
+  const world = points()
+  h.model.detectForVideo.mock.mockImplementation(() => ({ landmarks: [points()], worldLandmarks: [world] }))
+  const recorder = createRecorder({ bus: h.bus })
+  recorder.start()
+  await h.tracker.start()
+  h.step()
+  const detected = h.bus.events.find(e => e.type === EVENTS.POSE_FRAME).payload
+  assert.deepEqual(detected.worldLandmarks, world)
+  world[0].x = 99
+  assert.equal(detected.worldLandmarks[0].x, 0.5)
+  h.step(1100, false)
+  const recording = recorder.stop()
+  assert.equal(recording[0].timestampMs, 0)
+  assert.equal(recording[0].worldLandmarks[0].x, 0.5)
+  assert.deepEqual(recording[1].worldLandmarks, Array(33).fill(null))
+  assert.equal(JSON.parse(recorder.exportJSON())[0].worldLandmarks[0].x, 0.5)
 })
 
 test('pose_frame 带视频宽高比；尺寸未知时为 null', async t => {

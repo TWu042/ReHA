@@ -13,7 +13,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, basename } from 'node:path';
 import { createRepCounter } from '../src/movement/repCounter.js';
-import { kneeAngleDeg } from '../src/movement/angles.js';
+import { getPoseAngles } from '../src/movement/poseAngles.js';
 
 export const MOCK_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'mock');
 
@@ -37,7 +37,7 @@ export function analyzeFrames(frames, { aspectRatio = DEFAULT_ASPECT, config = {
   }
   const state = counter.getState();
   const validFrames = withAspect.filter(f => f.valid);
-  const angles = validFrames.map(f => kneeAngleDeg(f.landmarks, f.aspectRatio)).filter(a => a != null);
+  const angles = validFrames.map(f => getPoseAngles(f, { mode: state.angleSource ?? 'auto', aspectRatio }).kneeAngleDeg).filter(a => a != null);
   const seconds = frames.length > 1 ? (frames.at(-1).timestampMs - frames[0].timestampMs) / 1000 : 0;
   return {
     frames: frames.length,
@@ -47,6 +47,7 @@ export function analyzeFrames(frames, { aspectRatio = DEFAULT_ASPECT, config = {
     minAngle: angles.length ? Math.min(...angles) : null,
     maxAngle: angles.length ? Math.max(...angles) : null,
     repCount: state.repCount,
+    angleSource: state.angleSource,
     reps: state.reps.map(r => ({ rom: r.romDeg, minKneeAngle: r.minKneeAngle, durationMs: r.durationMs })),
     aborted,
   };
@@ -85,6 +86,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`\n${basename(file)}`);
     console.log(`  ${r.frames} 帧，${r.seconds.toFixed(1)} 秒，约 ${f1(r.fps)} 帧/秒，有效帧 ${f1(r.validRatio * 100)}%`);
     console.log(`  膝角范围 ${f1(r.minAngle)}°–${f1(r.maxAngle)}°`);
+    console.log(`  坐标模式：${r.angleSource ?? '尚无可用角度'}`);
     console.log(`  计数 ${r.repCount}` + (r.reps.length
       ? `：${r.reps.map(x => `最低 ${f1(x.minKneeAngle)}° ROM ${f1(x.rom)}°`).join('，')}` : ''));
     if (r.aborted.length) {

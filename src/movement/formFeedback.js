@@ -6,30 +6,30 @@ import {
   FEEDBACK
 } from "../shared/contracts.js";
 
-import {
-  kneeAngleDeg,
-  trunkLeanDeg
-} from "./angles.js";
+import { getPoseAngles } from "./poseAngles.js";
+import { TRACKING_GAP_MS } from "./config.js";
 
 import {
-  DESCENT_START_ANGLE,
   MAX_TRUNK_LEAN_DEG,
   FEEDBACK_COOLDOWN_MS,
-  SMOOTHING_ALPHA
+  SMOOTHING_ALPHA,
+  LEAN_HOLD_MS,
+  LEAN_RECOVERY_DEG
 } from "./feedbackConfig.js";
 
 // 保存 eventBus 的取消订阅函数
 let unsubscribe = null;
 
 // 指数平滑后的角度
-let smoothedKneeAngle = null;
 let smoothedTrunkAngle = null;
+let angleMode = 'auto';
+let angleSource = null;
+let lastTimestampMs = null;
+let leanStartedMs = null;
+let leanRecorded = false;
 
 // 记录每种提示上一次发送时间
 const lastFeedbackTime = new Map();
-
-// 是否处于下蹲过程中
-let isSquatting = false;
 
 // 指数移动平均
 function smooth(previous, current) {
@@ -46,7 +46,7 @@ function smooth(previous, current) {
 // 统一发送纠错提示
 function emitFeedback(timestampMs, code, message) {
   if (!Number.isFinite(timestampMs)) {
-    return;
+    return false;
   }
 
   const lastTime = lastFeedbackTime.get(code);
@@ -56,7 +56,7 @@ function emitFeedback(timestampMs, code, message) {
     lastTime !== undefined &&
     timestampMs - lastTime < FEEDBACK_COOLDOWN_MS
   ) {
-    return;
+    return false;
   }
 
   eventBus.emit(EVENTS.FORM_FEEDBACK, {
@@ -66,41 +66,32 @@ function emitFeedback(timestampMs, code, message) {
   });
 
   lastFeedbackTime.set(code, timestampMs);
+  return true;
 }
 
 // 每收到一帧 pose_frame，就执行一次
 function handlePoseFrame(frame) {
   // 无效帧直接跳过
-  if (!frame || frame.valid === false) {
+  if (!frame || frame.valid !== true || !Number.isFinite(frame.timestampMs)) {
     return;
   }
 
-  const aspectRatio = frame.aspectRatio ?? 1;
-
-  const kneeAngle = kneeAngleDeg(
-    frame.landmarks,
-    aspectRatio
-  );
-
-  const trunkAngle = trunkLeanDeg(
-    frame.landmarks,
-    aspectRatio
-  );
+  const angles = getPoseAngles(frame, { mode: angleSource ?? angleMode });
+  const trunkAngle = angles.trunkLeanDeg;
 
   // 角度无效时，不改变任何状态
-  if (kneeAngle === null || trunkAngle === null) {
+  if (trunkAngle === null) {
     return;
   }
 
-  if (!Number.isFinite(frame.timestampMs)) {
-    return;
+  if (lastTimestampMs !== null && frame.timestampMs <= lastTimestampMs) return;
+  if (lastTimestampMs !== null && frame.timestampMs - lastTimestampMs > TRACKING_GAP_MS) {
+    smoothedTrunkAngle = null;
+    leanStartedMs = null;
+    leanRecorded = false;
   }
-
-  // 平滑膝角
-  smoothedKneeAngle = smooth(
-    smoothedKneeAngle,
-    kneeAngle
-  );
+  lastTimestampMs = frame.timestampMs;
+  angleSource ??= angles.source;
 
   // 平滑躯干角
   smoothedTrunkAngle = smooth(
@@ -108,22 +99,17 @@ function handlePoseFrame(frame) {
     trunkAngle
   );
 
-  // 判断是否开始下蹲
-  if (smoothedKneeAngle < DESCENT_START_ANGLE) {
-    isSquatting = true;
+  // 与下蹲阶段无关：先弯腰、后弯腰都检测。持续弯腰只记一次。
+  if (smoothedTrunkAngle <= LEAN_RECOVERY_DEG) {
+    leanStartedMs = null;
+    leanRecorded = false;
+  } else if (smoothedTrunkAngle <= MAX_TRUNK_LEAN_DEG) {
+    leanStartedMs = null;
+  } else {
+    leanStartedMs ??= frame.timestampMs;
   }
-
-  // 判断是否回到站立
-  if (smoothedKneeAngle >= 160) {
-    isSquatting = false;
-  }
-
-  // 检测上身倾斜
-  if (
-    isSquatting &&
-    smoothedTrunkAngle > MAX_TRUNK_LEAN_DEG
-  ) {
-    emitFeedback(
+  if (!leanRecorded && leanStartedMs !== null && frame.timestampMs - leanStartedMs >= LEAN_HOLD_MS) {
+    leanRecorded = emitFeedback(
       frame.timestampMs,
       FEEDBACK.LEANING_FORWARD,
       "胸口抬起来，背挺直"
@@ -147,16 +133,19 @@ export function handleAbortedRep(abortedRep) {
 }
 
 // 开始监听动作数据
-export function startFormFeedback() {
+export function startFormFeedback(options = {}) {
   // 避免重复订阅
   if (unsubscribe) {
     unsubscribe();
   }
 
   // 重置当前训练状态
-  smoothedKneeAngle = null;
   smoothedTrunkAngle = null;
-  isSquatting = false;
+  angleMode = options.angleMode ?? 'auto';
+  angleSource = null;
+  lastTimestampMs = null;
+  leanStartedMs = null;
+  leanRecorded = false;
   lastFeedbackTime.clear();
 
   // 订阅 pose_frame
@@ -173,8 +162,10 @@ export function stopFormFeedback() {
     unsubscribe = null;
   }
 
-  smoothedKneeAngle = null;
   smoothedTrunkAngle = null;
-  isSquatting = false;
+  angleSource = null;
+  lastTimestampMs = null;
+  leanStartedMs = null;
+  leanRecorded = false;
   lastFeedbackTime.clear();
 }
