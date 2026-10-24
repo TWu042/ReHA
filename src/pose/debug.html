@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>P1 摄像头与关键点调试</title>
+    <style>
+      body { max-width: 900px; margin: 24px auto; padding: 0 16px; font: 16px/1.6 system-ui; }
+      video { display: block; width: 100%; max-height: 55vh; background: #18222b; }
+      button, select { padding: 8px; margin: 4px; font: inherit; }
+      pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f1f4f7; padding: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>P1 摄像头与关键点调试</h1>
+    <p>仅调试数据链路，不计数、不评分。视频在本机处理，模型与 WASM 从本项目加载。</p>
+    <video id="video" autoplay muted playsinline></video>
+    <p id="status" role="status">尚未启动。请将肩、髋、膝、踝完整放入画面。</p>
+    <button id="start">启动摄像头和识别</button>
+    <button id="stop">停止并释放摄像头</button>
+    <hr />
+    <label>录制内容
+      <select id="scenario">
+        <option value="normal_5">正常深蹲 5 次</option>
+        <option value="shallow_3">浅蹲 3 次</option>
+        <option value="bottom_pause_2">底部停 2 秒再站起 × 2</option>
+        <option value="tracking_loss">出框与恢复测试</option>
+      </select>
+    </label>
+    <button id="record">开始录制</button>
+    <button id="finish">停止录制</button>
+    <button id="export">导出 JSON</button>
+    <button id="clear">清空录制</button>
+    <pre id="data">尚无关键点数据</pre>
+    <p>此入口不绘制骨架，骨架由 P5 的 poseRenderer.js 接入。</p>
+    <script type="module" src="./debug.js"></script>
+  </body>
+</html>
