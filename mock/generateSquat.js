@@ -93,7 +93,7 @@ export function generate({
 const STANDARD_FRAMES = 3 * 90; // 3 次 × (60 帧动作 + 30 帧站立)
 export const DATASETS = {
   'synthetic_squat.json': {},
-  'shallow_squat.json':   { minAngle: 130 },
+  'shallow_squat.json':   { minAngle: 150 },   // 真人浅蹲约 144–153°
   'pause_at_bottom.json': { pauseAtBottomMs: 2000 },
   'half_rep.json':        { reps: 1, returnToStand: false },
   'tracking_lost.json':   { invalidRange: [STANDARD_FRAMES / 2 - 15, STANDARD_FRAMES / 2 + 15] },
