@@ -1,7 +1,10 @@
 // 模块 2 对外入口：把 repCounter 接上 eventBus。
 //
-//   startMovement()  开始一次训练：订阅 pose_frame，每完成一次深蹲发 rep_completed
-//   stopMovement()   结束训练：取消订阅，发 session_completed（带 MovementResult），并返回同一份结果
+//   startMovement()  开始一次训练：订阅 pose_frame，每完成一次深蹲发 rep_completed；同时开启 P4 的纠错
+//   stopMovement()   结束训练：取消订阅、关闭纠错，发 session_completed（带 MovementResult），并返回同一份结果
+//
+// 纠错（P4 formFeedback.js）：前倾由它自己订阅 pose_frame 检测；没蹲到底由这里把 abortedRep 交给它。
+// 两种提示都以 form_feedback 事件发出。
 //
 // 用法（P5 训练页）：
 //   import { startMovement, stopMovement } from '../movement/movementModule.js';
@@ -10,8 +13,10 @@
 import { eventBus } from '../shared/eventBus.js';
 import { EVENTS } from '../shared/contracts.js';
 import { createRepCounter } from './repCounter.js';
+import { startFormFeedback, stopFormFeedback, handleAbortedRep } from './formFeedback.js';
 
 const round1 = x => Math.round(x * 10) / 10;
+const round2 = x => Math.round(x * 100) / 100;
 
 let counter = null;
 let unsubscribe = null;
@@ -23,6 +28,8 @@ function handlePoseFrame(poseFrame) {
   const result = counter.processFrame(poseFrame);
   if (!result) return;
   framesUsed++;
+
+  if (result.abortedRep) handleAbortedRep(result.abortedRep);
 
   const rep = result.completedRep;
   if (rep) {
@@ -45,6 +52,7 @@ export function startMovement(options = {}) {
   framesTotal = 0;
   framesUsed = 0;
   unsubscribe = eventBus.on(EVENTS.POSE_FRAME, handlePoseFrame);
+  startFormFeedback();
 }
 
 /**
@@ -55,6 +63,7 @@ export function stopMovement() {
   if (!unsubscribe) return null;
   unsubscribe();
   unsubscribe = null;
+  stopFormFeedback();
 
   const { repCount, reps } = counter.getState();
   const result = {
@@ -65,6 +74,9 @@ export function stopMovement() {
       durationMs: r.durationMs,
       minKneeAngle: round1(r.minKneeAngle),
       maxKneeAngle: round1(r.maxKneeAngle),
+      // 这次动作的逐帧膝角（给 P3 算平稳度）。kneeAngleDeg 用平滑后的值，和算 ROM 用的是同一组数。
+      // 从膝角跌破 STAND_ANGLE 开始，到回到 STAND_ANGLE 以上那一帧结束；timestampMs 严格递增。
+      samples: r.samples.map(s => ({ timestampMs: s.timestampMs, kneeAngleDeg: round2(s.smoothedAngle) })),
     })),
     // 基线 ROM 需要历史训练记录才能算，本模块拿不到，所以按规则用 null，由 P3 根据历史数据填
     baselineROM: null,

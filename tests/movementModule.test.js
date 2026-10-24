@@ -24,6 +24,8 @@ const repEvents = [];
 const sessionEvents = [];
 eventBus.on(EVENTS.REP_COMPLETED, e => repEvents.push(e));
 eventBus.on(EVENTS.SESSION_COMPLETED, e => sessionEvents.push(e));
+const feedbackEvents = [];
+eventBus.on(EVENTS.FORM_FEEDBACK, e => feedbackEvents.push(e));
 
 // 1. 没开始就结束：不发事件
 check('没开始时 stopMovement 返回 null', stopMovement() === null);
@@ -43,6 +45,19 @@ check('MovementResult 次数为 3', result.repCount === 3 && result.reps.length 
 check('averageROM 在 70–90° 之间', result.averageROM >= 70 && result.averageROM <= 90, `${result.averageROM}°`);
 check('trackingQuality 为 1', result.trackingQuality === 1, `${result.trackingQuality}`);
 
+// 2b. 每次深蹲的 samples（给 P3 算平稳度）
+check('每次深蹲保留 rom、durationMs、minKneeAngle、maxKneeAngle', result.reps.every(r =>
+  ['rom', 'durationMs', 'minKneeAngle', 'maxKneeAngle'].every(k => typeof r[k] === 'number')));
+check('每次深蹲都有非空 samples', result.reps.every(r => Array.isArray(r.samples) && r.samples.length > 0),
+  `每次 ${result.reps.map(r => r.samples.length).join('、')} 帧`);
+check('samples 只有 timestampMs 和 kneeAngleDeg 两个字段', result.reps.every(r =>
+  r.samples.every(s => Object.keys(s).join() === 'timestampMs,kneeAngleDeg')));
+check('samples 的 timestampMs 严格递增', result.reps.every(r =>
+  r.samples.every((s, i) => i === 0 || s.timestampMs > r.samples[i - 1].timestampMs)));
+check('samples 用平滑角度：最小值和 minKneeAngle 一致', result.reps.every(r =>
+  Math.abs(Math.min(...r.samples.map(s => s.kneeAngleDeg)) - r.minKneeAngle) <= 0.06));
+check('合成标准深蹲不出现"没蹲到底"提示', !feedbackEvents.some(e => e.code === 'not_deep_enough'));
+
 // 3. 结束后再来帧：不再计数
 for (const f of load('synthetic_squat.json')) eventBus.emit(EVENTS.POSE_FRAME, f);
 check('结束后不再响应 pose_frame', repEvents.length === 3);
@@ -58,8 +73,20 @@ check('tracking_lost 的 trackingQuality < 1', lost.trackingQuality < 1, `${lost
 // 5. 一帧都没收到
 startMovement();
 const empty = stopMovement();
-check('没有帧时 averageROM 和 trackingQuality 为 null',
-  empty.repCount === 0 && empty.averageROM === null && empty.trackingQuality === null);
+check('没有帧时 averageROM 和 trackingQuality 为 null，reps 为 []',
+  empty.repCount === 0 && empty.averageROM === null && empty.trackingQuality === null &&
+  Array.isArray(empty.reps) && empty.reps.length === 0);
+
+// 6. 浅蹲：通过 P4 的 formFeedback 发出"没蹲到底"提示；结束后不再提示
+feedbackEvents.length = 0;
+startMovement();
+for (const f of load('shallow_squat.json')) eventBus.emit(EVENTS.POSE_FRAME, f);
+stopMovement();
+const shallowCount = feedbackEvents.filter(e => e.code === 'not_deep_enough').length;
+check('浅蹲发出"没蹲到底"提示', shallowCount >= 1, `${shallowCount} 次`);
+const before = feedbackEvents.length;
+for (const f of load('shallow_squat.json')) eventBus.emit(EVENTS.POSE_FRAME, f);
+check('结束后不再发纠错提示', feedbackEvents.length === before);
 
 console.log(failed === 0 ? '\n全部通过' : `\n${failed} 项失败`);
 process.exitCode = failed === 0 ? 0 : 1;
