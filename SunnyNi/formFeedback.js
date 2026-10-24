@@ -1,10 +1,9 @@
-
-import { eventBus } from "../shared/eventBus.js";
+import { eventBus } from "../src/shared/eventBus.js";
 
 import {
   EVENTS,
   FEEDBACK
-} from "../shared/contracts.js";
+} from "../src/shared/contracts.js";
 
 import {
   kneeAngleDeg,
