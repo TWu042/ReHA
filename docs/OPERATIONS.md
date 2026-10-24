@@ -455,6 +455,8 @@ export const FEEDBACK = {
 - `averageROM`：reps 里 rom 的平均值；一次都没有时为 null
 - `trackingQuality`：能用的帧占收到的帧的比例（0–1）；一帧都没有时为 null
 
+> **ROM 只有这一个来源。**结果页、评分、趋势图都用 session_completed 里的 `rom` / `averageROM`，不要自己另算。原计划中的 movement/metrics.js 和计数器重复，已删除。
+
 **baselineROM（P3）：**用最早三次有效历史训练的 averageROM 平均值，不包括本次；不足三次就用已有的；一次都没有为 null。存储键 `rehab_sessions_v2`（v1 是加 aspectRatio 之前的数据，ROM 偏小，不再使用）。
 
 ## 8.3 各模块变量名
