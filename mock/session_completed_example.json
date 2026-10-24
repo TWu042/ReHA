@@ -1,0 +1,27 @@
+{
+  "exercise": "squat",
+  "repCount": 3,
+  "reps": [
+    {
+      "rom": 78.1,
+      "durationMs": 1567,
+      "minKneeAngle": 91.6,
+      "maxKneeAngle": 169.7
+    },
+    {
+      "rom": 78.9,
+      "durationMs": 1567,
+      "minKneeAngle": 91.3,
+      "maxKneeAngle": 170.2
+    },
+    {
+      "rom": 79,
+      "durationMs": 1567,
+      "minKneeAngle": 91.3,
+      "maxKneeAngle": 170.4
+    }
+  ],
+  "baselineROM": null,
+  "averageROM": 78.7,
+  "trackingQuality": 1
+}
