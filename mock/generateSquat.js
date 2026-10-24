@@ -42,12 +42,37 @@ export function frameFromKneeAngle(kneeAngleDeg, timestampMs, noise = 0.003, ran
   return { timestampMs, landmarks, valid: true };
 }
 
+// 把动作步骤展开成每帧的膝角，从 startAngle 开始。步骤：
+//   { to: 90, ms: 1000 }  1 秒内平滑变到 90°（ms 为 0 表示直接跳到 90°）
+//   { hold: 500 }         保持当前角度 0.5 秒
+//   { lost: 3000 }        丢失追踪 3 秒（这些帧 valid: false）
+function expandSequence(sequence, startAngle, fps) {
+  const angles = [], lost = [];
+  let current = startAngle;
+  for (const step of sequence) {
+    const n = Math.round((fps * (step.ms ?? step.hold ?? step.lost)) / 1000);
+    if ('to' in step) {
+      const from = current;
+      for (let i = 0; i < n; i++) {
+        angles.push(from + (step.to - from) * (1 - Math.cos(Math.PI * i / n)) / 2);
+        lost.push(false);
+      }
+      current = step.to;
+    } else {
+      for (let i = 0; i < n; i++) { angles.push(current); lost.push('lost' in step); }
+    }
+  }
+  return { angles, lost };
+}
+
 /**
  * 生成一段深蹲数据，返回 PoseFrame 数组。
  * 每次深蹲：下蹲（repDurationMs 的一半）→ 底部停 pauseAtBottomMs → 起身（另一半）→ 站 standDurationMs。
  * 默认参数 = 第 7.1 节的 3 次标准深蹲。
+ * 传 sequence 时改为按步骤生成（见 expandSequence），reps 等参数不再起作用。
  */
 export function generate({
+  sequence = null,
   reps = 3,
   standAngle = 170,
   minAngle = 90,
@@ -66,8 +91,10 @@ export function generate({
   const pause = Math.round((fps * pauseAtBottomMs) / 1000);
   const stand = Math.round((fps * standDurationMs) / 1000);
 
-  const angles = [];
-  for (let rep = 0; rep < reps; rep++) {
+  let angles = [];
+  let lost = [];
+  if (sequence) ({ angles, lost } = expandSequence(sequence, standAngle, fps));
+  else for (let rep = 0; rep < reps; rep++) {
     for (let i = 0; i < half; i++) angles.push(standAngle - range * (1 - Math.cos(Math.PI * i / half)) / 2);
     for (let i = 0; i < pause; i++) angles.push(minAngle);
     if (!returnToStand) {
@@ -80,7 +107,7 @@ export function generate({
 
   return angles.map((angle, i) => {
     const t = Math.round((i * 1000) / fps);
-    if (invalidRange && i >= invalidRange[0] && i < invalidRange[1]) {
+    if (lost[i] || (invalidRange && i >= invalidRange[0] && i < invalidRange[1])) {
       // 丢失追踪：valid: false，而且关键点故意给成"站直"的错误位置。
       // 如果计数器没有跳过这些帧，就会多算或少算，测试能发现。
       return { ...frameFromKneeAngle(178, t, noise * 10, rand), valid: false };
@@ -89,14 +116,21 @@ export function generate({
   });
 }
 
-// 5 份测试数据
+// 测试数据
 const STANDARD_FRAMES = 3 * 90; // 3 次 × (60 帧动作 + 30 帧站立)
+const ONE_REP = [{ to: 90, ms: 1000 }, { to: 170, ms: 1000 }, { hold: 1000 }];
 export const DATASETS = {
   'synthetic_squat.json': {},
-  'shallow_squat.json':   { minAngle: 130 },
+  'shallow_squat.json':   { minAngle: 150 },   // 真人浅蹲约 144–153°
   'pause_at_bottom.json': { pauseAtBottomMs: 2000 },
   'half_rep.json':        { reps: 1, returnToStand: false },
   'tracking_lost.json':   { invalidRange: [STANDARD_FRAMES / 2 - 15, STANDARD_FRAMES / 2 + 15] },
+  // 蹲到底时出框 3 秒，站着回来，再正常蹲 1 次 → 只算 1 次
+  'lost_at_bottom.json':  { sequence: [{ hold: 1000 }, { to: 90, ms: 1000 }, { hold: 300 }, { lost: 3000 },
+                                       { to: 170, ms: 0 }, { hold: 1000 }, ...ONE_REP] },
+  // 蹲到底时出框 3 秒，蹲着回来再站起，再正常蹲 1 次 → 只算 1 次
+  'lost_return_crouched.json': { sequence: [{ hold: 1000 }, { to: 90, ms: 1000 }, { hold: 300 }, { lost: 3000 },
+                                            { hold: 500 }, { to: 170, ms: 1000 }, { hold: 1000 }, ...ONE_REP] },
 };
 
 // 命令行入口
@@ -107,6 +141,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     writeFileSync(join(outDir, name), JSON.stringify(frames));
     const seconds = (frames.at(-1).timestampMs / 1000).toFixed(1);
     const invalid = frames.filter(f => !f.valid).length;
-    console.log(`${name.padEnd(22)} ${String(frames.length).padStart(4)} 帧  ${seconds}s  无效帧 ${invalid}`);
+    console.log(`${name.padEnd(26)} ${String(frames.length).padStart(4)} 帧  ${seconds}s  无效帧 ${invalid}`);
   }
 }
