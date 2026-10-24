@@ -1,15 +1,58 @@
 export default function Results({ onHome }) {
     return (
-      <div>
-        <h1>Training Complete!</h1>
-        <h2>Your Results</h2>
+      <section className="results-page">
   
-        <p>Repetitions: --</p>
-        <p>Accuracy: --</p>
+        <div className="results-header">
+          <div className="section-label">
+            ✧ ADVENTURE COMPLETE ✧
+          </div>
   
-        <button onClick={onHome}>
-          Back to Home
+          <div className="trophy">🏆</div>
+  
+          <h1 className="results-title">
+            Quest Complete!
+          </h1>
+  
+          <p className="page-description">
+            Every step forward is worth celebrating.
+          </p>
+        </div>
+  
+        <div className="results-grid">
+          <div className="glass-panel result-card">
+            <span className="result-icon">⭐</span>
+            <h2>--</h2>
+            <p>Repetitions</p>
+          </div>
+  
+          <div className="glass-panel result-card">
+            <span className="result-icon">🎯</span>
+            <h2>--</h2>
+            <p>Accuracy</p>
+          </div>
+  
+          <div className="glass-panel result-card">
+            <span className="result-icon">⏱️</span>
+            <h2>--</h2>
+            <p>Duration</p>
+          </div>
+        </div>
+  
+        <div className="glass-panel achievement-panel">
+          <h3>✦ Your Adventure Continues ✦</h3>
+          <p>
+            Small steps lead to big achievements.
+            Keep showing up for yourself!
+          </p>
+        </div>
+  
+        <button
+          className="primary-button"
+          onClick={onHome}
+        >
+          ← Back to Home
         </button>
-      </div>
+  
+      </section>
     );
   }
