@@ -1,11 +1,25 @@
-# Python
-__pycache__/
-*.pyc
-.venv/
-venv/
-.ipynb_checkpoints/
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# 系统和编辑器
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-Thumbs.db
-.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+/ReHA/
