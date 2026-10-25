@@ -611,3 +611,21 @@ button {
   letter-spacing: 0;
   color: #f1f9ff;
 }
+/* P3 movement scores on the Results page */
+.results-page .score-grid {
+  margin-top: 12px;
+}
+
+.results-page .score-note {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
+.results-page .score-disclaimer {
+  margin: 0 0 24px;
+  font-size: 13px;
+  opacity: 0.7;
+}

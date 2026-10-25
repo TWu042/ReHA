@@ -3,6 +3,7 @@ import { useState } from "react";
 import Home from "./app/Home";
 import Training from "./app/Training";
 import Results from "./app/Results";
+import { analyzeSession } from "./analytics/analyticsModule";
 import "./App.css";
 
 export default function App() {
@@ -11,9 +12,13 @@ export default function App() {
   // Save the completed training session
   const [sessionResult, setSessionResult] = useState(null);
 
+  // P3 analytics summary for that session (scores, baseline)
+  const [analysis, setAnalysis] = useState(null);
+
   function handleStart() {
     // Reset previous session data
     setSessionResult(null);
+    setAnalysis(null);
     setPage("training");
   }
 
@@ -21,12 +26,20 @@ export default function App() {
     // Receive real data from P2 movement module
     console.log("Training finished:", result);
 
+    // P3 scoring: adapter -> summary -> save history -> emit session_summary.
+    // Never throws; on failure Results still shows P2's raw data.
+    const scored = analyzeSession(result);
+    if (scored.error) console.warn("Analytics:", scored.error);
+    console.log("Session summary:", scored.summary);
+
     setSessionResult(result);
+    setAnalysis(scored);
     setPage("results");
   }
 
   function handleHome() {
     setSessionResult(null);
+    setAnalysis(null);
     setPage("home");
   }
 
@@ -62,6 +75,7 @@ export default function App() {
         {page === "results" && (
           <Results
             result={sessionResult}
+            analysis={analysis}
             onHome={handleHome}
           />
         )}

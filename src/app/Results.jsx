@@ -1,5 +1,10 @@
 
-export default function Results({ result, onHome }) {
+// P3 scores are 0-100 or null (null = not enough data yet, never shown as 0)
+function formatScore(score) {
+  return Number.isFinite(score) ? Math.round(score).toString() : "--";
+}
+
+export default function Results({ result, analysis, onHome }) {
     // Real session data from P2
     const repCount = result?.repCount ?? 0;
   
@@ -14,6 +19,22 @@ export default function Results({ result, onHome }) {
         : "--";
   
     const completedReps = result?.reps ?? [];
+
+    // P3 analytics summary
+    const summary = analysis?.summary ?? null;
+
+    const rangeNote = !summary
+      ? ""
+      : summary.baselineROM != null
+        ? `vs. your baseline ${summary.baselineROM.toFixed(1)}°`
+        : "Baseline builds from earlier days";
+
+    const consistencyNote =
+      summary && summary.completedReps === 0 ? "Needs at least 1 rep" : "How even your reps were";
+
+    const qualityNote = summary?.qualityScore != null
+      ? "Range 40% · Smoothness 30% · Consistency 30%"
+      : "Coming soon";
   
     return (
       <section className="results-page">
@@ -54,6 +75,39 @@ export default function Results({ result, onHome }) {
           </div>
         </div>
   
+        {summary && (
+          <>
+            <div className="section-label">✧ MOVEMENT SCORES ✧</div>
+
+            <div className="results-grid score-grid">
+              <div className="glass-panel result-card">
+                <span className="result-icon">📏</span>
+                <h2>{formatScore(summary.rangeScore)}</h2>
+                <p>Range Score</p>
+                <small className="score-note">{rangeNote}</small>
+              </div>
+
+              <div className="glass-panel result-card">
+                <span className="result-icon">🔁</span>
+                <h2>{formatScore(summary.consistencyScore)}</h2>
+                <p>Consistency</p>
+                <small className="score-note">{consistencyNote}</small>
+              </div>
+
+              <div className="glass-panel result-card">
+                <span className="result-icon">💎</span>
+                <h2>{formatScore(summary.qualityScore)}</h2>
+                <p>Overall Quality</p>
+                <small className="score-note">{qualityNote}</small>
+              </div>
+            </div>
+
+            <p className="score-disclaimer">
+              Experimental scores for motivation only, not a medical assessment.
+            </p>
+          </>
+        )}
+
         <div className="glass-panel achievement-panel">
           <h3>✦ Your Adventure Continues ✦</h3>
   

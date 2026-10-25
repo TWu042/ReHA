@@ -5,7 +5,7 @@
 | `../App.jsx` | 外框 | 导航，在三个页面之间切换，保存本次训练结果 |
 | `Home.jsx` | 首页 | 介绍和"开始"按钮 |
 | `Training.jsx` | 训练页 | 摄像头画面、计数、追踪状态、纠错提示 |
-| `Results.jsx` | 结果页 | 次数、平均 ROM、追踪质量、每次的 ROM 和时长 |
+| `Results.jsx` | 结果页 | 次数、平均 ROM、追踪质量、每次的 ROM 和时长；P3 评分（幅度、一致性、总分） |
 
 ## 训练页怎么接其他模块
 
@@ -29,7 +29,8 @@
 
 ## 待办
 
-- 结果页目前直接显示 P2 的原始数据；P3 的评分（session_summary）做好后改为显示评分
-- 训练中点导航栏离开，会发出一次不完整的 `session_completed`；P3 存历史时可能存进去。建议训练中禁用导航
+- 训练结束时 `App.jsx` 调用 `analyzeSession(result)`（`src/analytics/analyticsModule.js`）：转换 → P3 评分 → 存入 localStorage（`rehab_sessions_v2`）→ 发出 `session_summary`。出错不影响页面，结果页只显示 P2 原始数据
+- 评分为 null 时显示 `--`：幅度分要有更早日期的记录当基线；总分要等 P3 的平稳度分数
+- 训练中点导航栏离开，会发出一次不完整的 `session_completed`，但不会评分和存历史（只有点结束训练才会）。仍建议训练中禁用导航
 - 可以用 `getMovementState().waitingForStand` 提示"请先站直"（刚开始没站直时不计数）
 - P4 的剧情动画区域还没接入
