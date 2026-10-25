@@ -11,6 +11,7 @@ import {
 
 import { eventBus } from "../shared/eventBus.js";
 import { EVENTS, FEEDBACK } from "../shared/contracts.js";
+import FoxReward from "../story/FoxReward.jsx";
 
 // tracking_lost 的原因 → 页面上显示的话
 const LOST_TEXT = {
@@ -757,11 +758,8 @@ export default function Training({ onFinish, onActiveChange }) {
                       : "block",
                 width: "100%",
                 height: "100%",
-                minHeight: "260px",
-                objectFit:
-                  inputMode === "upload"
-                    ? "contain"
-                    : "cover",
+                minHeight: 0,
+                objectFit: "contain",
                 transform:
                   inputMode === "camera"
                     ? "scaleX(-1)"
@@ -857,6 +855,7 @@ export default function Training({ onFinish, onActiveChange }) {
         </div>
 
         <div className="training-sidebar">
+          <FoxReward />
           <div className="glass-panel stats-panel">
             <div className="section-label">
               YOUR PROGRESS

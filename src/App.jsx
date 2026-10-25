@@ -5,6 +5,7 @@ import Training from "./app/Training";
 import Results from "./app/Results";
 import { analyzeSession } from "./analytics/analyticsModule";
 import "./App.css";
+import "./app/trainingViewport.css";
 
 export default function App() {
   const [page, setPage] = useState("home");

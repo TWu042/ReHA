@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>狐狸奖励动画测试</title>
+    <style>
+      body { max-width: 520px; margin: 24px auto; padding: 16px; font: 16px/1.6 system-ui; }
+      canvas { display: block; width: 270px; height: 360px; border-radius: 16px; }
+      button { padding: 12px; margin: 16px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>狐狸奖励动画测试</h1>
+    <p>模拟事件，只验证动画；不访问摄像头、不产生真实训练记录。</p>
+    <canvas id="fox" width="270" height="360" aria-label="狐狸关键帧动画"></canvas>
+    <p id="status" role="status">正在加载图片</p>
+    <button id="celebrate" disabled>模拟完成一次深蹲（仅测试动画）</button>
+    <p>待机：第 1–4 帧，每帧 250ms。庆祝：第 5–16 帧，每帧 140ms，总计 1.68 秒。庆祝期间重复点击会被忽略。</p>
+    <p>这套属于关键帧动画。背景与造型差异可能产生轻微抖动，适合验证游戏效果，不能达到流畅 3D 视频的程度。</p>
+    <script type="module" src="./debug.js"></script>
+  </body>
+</html>

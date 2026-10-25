@@ -1,0 +1,120 @@
+/* 仅训练页占满可视区域；首页、报告页仍使用原布局。 */
+.app-shell:has(.training-page) {
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.app-shell:has(.training-page) .navbar { padding: 10px 20px; }
+.app-shell:has(.training-page) .navbar button { padding: 7px 15px; }
+.app-shell:has(.training-page) .main-content {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 10px 16px;
+  margin: 0;
+}
+.app-shell:has(.training-page) .footer { padding: 4px 12px; font-size: 11px; }
+.training-page {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.training-page > .section-label,
+.training-page > .page-description { display: none; }
+.training-page h1 { margin: 0; font-size: 24px; line-height: 1.2; }
+.training-page .training-input-modes { margin: 0 !important; gap: 8px !important; }
+.training-page .primary-button { margin: 0; padding: 8px 16px; font-size: 14px; line-height: 1.4; }
+.training-page > .primary-button { align-self: center; margin: 0; flex-shrink: 0; }
+.training-page > p { margin: 0 !important; font-size: 13px; overflow-wrap: anywhere; }
+.training-page .training-layout {
+  flex: 1;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) clamp(230px, 23vw, 320px);
+  gap: 12px;
+  margin: 0;
+}
+.training-page .camera-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 12px;
+}
+.training-page .panel-heading { flex-shrink: 0; font-size: 14px; }
+.training-page .camera-placeholder { flex: 1; min-height: 0; min-width: 0; margin-top: 8px; }
+.training-page .camera-placeholder video { min-height: 0; }
+.training-page .camera-symbol { font-size: clamp(28px, 6vh, 64px); }
+.training-page .camera-placeholder h2 { font-size: clamp(16px, 2vw, 24px); margin: 8px; }
+.training-page .camera-placeholder p { margin: 6px; font-size: 13px; }
+.training-page .tracking-indicator { margin: 6px 0 0; padding: 5px 8px; font-size: 13px; }
+.training-page .training-sidebar {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 8px;
+}
+.training-page .stats-panel,
+.training-page .feedback-panel { padding: 10px 12px; min-width: 0; }
+.training-page .section-label { font-size: 9px; line-height: 1.5; margin: 0; }
+.training-page .rep-number { margin: 2px 0; font-size: 36px; line-height: 1.1; }
+.training-page .rep-number span { font-size: 18px; }
+.training-page .stats-panel p { font-size: 12px; margin: 4px 0; }
+.training-page .progress-track { height: 7px; }
+.training-page .feedback-panel h3 { font-size: 14px; margin: 4px 0; }
+.training-page .feedback-panel p { font-size: 13px; line-height: 1.35; margin: 4px 0; }
+.training-page .feedback-panel .form-tip { padding: 5px 8px; }
+.training-page .fox-reward-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  padding: 10px;
+}
+.training-page .fox-reward-panel h3 { font-size: 14px; line-height: 1.3; margin: 4px 0; }
+.training-page .fox-reward-stage {
+  flex: 1;
+  min-height: 0;
+  container-type: size;
+  display: grid;
+  place-items: center;
+}
+.training-page .fox-reward-window {
+  width: min(100cqw, 75cqh);
+  max-width: none;
+  margin: 0;
+}
+.training-page .fox-reward-caption { font-size: 12px; line-height: 1.3; margin: 5px 0 0; }
+.training-page .fox-reward-note { font-size: 10px; line-height: 1.3; margin-top: 3px; }
+
+@media (max-width: 640px) {
+  .app-shell:has(.training-page) .navbar { flex-direction: row; padding: 8px 10px; gap: 8px; }
+  .app-shell:has(.training-page) .brand { font-size: 13px; }
+  .app-shell:has(.training-page) .navbar nav { gap: 4px; }
+  .app-shell:has(.training-page) .navbar button { font-size: 12px; padding: 6px 9px; }
+  .app-shell:has(.training-page) .main-content { padding: 8px; }
+  .training-page { gap: 6px; }
+  .training-page h1 { font-size: 20px; }
+  .training-page .training-layout { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1.4fr) minmax(0, 1fr); gap: 6px; }
+  .training-page .training-sidebar { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 6px; }
+  .training-page .fox-reward-panel { grid-column: 1; grid-row: 1 / 3; }
+  .training-page .stats-panel { grid-column: 2; grid-row: 1; }
+  .training-page .feedback-panel { grid-column: 2; grid-row: 2; }
+  .training-page .fox-reward-panel > .section-label,
+  .training-page .fox-reward-panel h3,
+  .training-page .fox-reward-note { display: none; }
+  .training-page .feedback-panel h3 { display: none; }
+  .training-page .camera-panel { padding: 8px; }
+}
+
+@media (max-height: 650px) and (min-width: 641px) {
+  .training-page h1 { font-size: 20px; }
+  .training-page .fox-reward-panel > .section-label,
+  .training-page .fox-reward-panel h3,
+  .training-page .fox-reward-note { display: none; }
+  .training-page .feedback-panel h3 { display: none; }
+}
