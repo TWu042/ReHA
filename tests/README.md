@@ -8,6 +8,7 @@
 | `node tests/realRecordings.test.js` | 计数器 × 4 段 P1 真人录制 | P2 |
 | `node tests/movementModule.test.js` | 事件、session_completed 格式、samples、纠错接入、getMovementState | P2 |
 | `node tests/pipeline.test.js` | 集成：录制 → 计数 → adapter → P3 评分 → 存历史，6 段录制 | P2 |
+| `node tests/analyticsModule.test.js` | 网页结束训练时的评分入口：存历史、第二天出基线、0 次、历史损坏、无存储、坏数据 | P2 |
 | `node tests/robustness.test.js` | 降帧率（60–10 帧/秒）、时间抖动、掉帧、关键点抖动下次数和 ROM 是否稳定（约 1 分钟） | P2 |
 | `node tests/test-scoring.mjs` 等 6 个 `.mjs` | 评分、基线、历史存储、模拟历史 | P3 |
 | `node --test tests/pose3d.test.js` | 三维角度、弯腰检测 | P1 |
