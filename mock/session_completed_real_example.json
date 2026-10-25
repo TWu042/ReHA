@@ -1,0 +1,1549 @@
+{
+  "exercise": "squat",
+  "repCount": 4,
+  "reps": [
+    {
+      "rom": 50.4,
+      "durationMs": 1514,
+      "minKneeAngle": 128.8,
+      "maxKneeAngle": 179.3,
+      "samples": [
+        {
+          "timestampMs": 5745.099999904633,
+          "kneeAngleDeg": 159.5
+        },
+        {
+          "timestampMs": 5760.5,
+          "kneeAngleDeg": 158.51
+        },
+        {
+          "timestampMs": 5775.300000190735,
+          "kneeAngleDeg": 157.57
+        },
+        {
+          "timestampMs": 5790.300000190735,
+          "kneeAngleDeg": 156.71
+        },
+        {
+          "timestampMs": 5805.400000095367,
+          "kneeAngleDeg": 155.75
+        },
+        {
+          "timestampMs": 5820.599999904633,
+          "kneeAngleDeg": 154.97
+        },
+        {
+          "timestampMs": 5835.5,
+          "kneeAngleDeg": 154.36
+        },
+        {
+          "timestampMs": 5850.700000286102,
+          "kneeAngleDeg": 153.66
+        },
+        {
+          "timestampMs": 5866,
+          "kneeAngleDeg": 152.97
+        },
+        {
+          "timestampMs": 5881.400000095367,
+          "kneeAngleDeg": 152.29
+        },
+        {
+          "timestampMs": 5896.800000190735,
+          "kneeAngleDeg": 151.47
+        },
+        {
+          "timestampMs": 5912.099999904633,
+          "kneeAngleDeg": 150.75
+        },
+        {
+          "timestampMs": 5927.200000286102,
+          "kneeAngleDeg": 150.19
+        },
+        {
+          "timestampMs": 5942.200000286102,
+          "kneeAngleDeg": 149.64
+        },
+        {
+          "timestampMs": 5957.400000095367,
+          "kneeAngleDeg": 149.27
+        },
+        {
+          "timestampMs": 5972.599999904633,
+          "kneeAngleDeg": 149.08
+        },
+        {
+          "timestampMs": 5987.599999904633,
+          "kneeAngleDeg": 148.89
+        },
+        {
+          "timestampMs": 6002.599999904633,
+          "kneeAngleDeg": 148.72
+        },
+        {
+          "timestampMs": 6017.700000286102,
+          "kneeAngleDeg": 148.55
+        },
+        {
+          "timestampMs": 6032.5,
+          "kneeAngleDeg": 148.33
+        },
+        {
+          "timestampMs": 6047.700000286102,
+          "kneeAngleDeg": 148.14
+        },
+        {
+          "timestampMs": 6062.800000190735,
+          "kneeAngleDeg": 147.72
+        },
+        {
+          "timestampMs": 6077.900000095367,
+          "kneeAngleDeg": 147.24
+        },
+        {
+          "timestampMs": 6092.900000095367,
+          "kneeAngleDeg": 146.93
+        },
+        {
+          "timestampMs": 6108.300000190735,
+          "kneeAngleDeg": 146.49
+        },
+        {
+          "timestampMs": 6123.800000190735,
+          "kneeAngleDeg": 146.18
+        },
+        {
+          "timestampMs": 6139,
+          "kneeAngleDeg": 145.85
+        },
+        {
+          "timestampMs": 6154,
+          "kneeAngleDeg": 145.57
+        },
+        {
+          "timestampMs": 6168.900000095367,
+          "kneeAngleDeg": 145.06
+        },
+        {
+          "timestampMs": 6184,
+          "kneeAngleDeg": 144.52
+        },
+        {
+          "timestampMs": 6199.099999904633,
+          "kneeAngleDeg": 143.8
+        },
+        {
+          "timestampMs": 6214,
+          "kneeAngleDeg": 143.46
+        },
+        {
+          "timestampMs": 6229.200000286102,
+          "kneeAngleDeg": 142.98
+        },
+        {
+          "timestampMs": 6244.400000095367,
+          "kneeAngleDeg": 142.62
+        },
+        {
+          "timestampMs": 6259.599999904633,
+          "kneeAngleDeg": 142.28
+        },
+        {
+          "timestampMs": 6274.700000286102,
+          "kneeAngleDeg": 141.86
+        },
+        {
+          "timestampMs": 6289.900000095367,
+          "kneeAngleDeg": 141.73
+        },
+        {
+          "timestampMs": 6305,
+          "kneeAngleDeg": 141.47
+        },
+        {
+          "timestampMs": 6320.099999904633,
+          "kneeAngleDeg": 141.27
+        },
+        {
+          "timestampMs": 6334.900000095367,
+          "kneeAngleDeg": 141.05
+        },
+        {
+          "timestampMs": 6350,
+          "kneeAngleDeg": 140.95
+        },
+        {
+          "timestampMs": 6365.400000095367,
+          "kneeAngleDeg": 140.71
+        },
+        {
+          "timestampMs": 6380.700000286102,
+          "kneeAngleDeg": 140.44
+        },
+        {
+          "timestampMs": 6395.800000190735,
+          "kneeAngleDeg": 140.16
+        },
+        {
+          "timestampMs": 6410.700000286102,
+          "kneeAngleDeg": 139.85
+        },
+        {
+          "timestampMs": 6425.700000286102,
+          "kneeAngleDeg": 139.55
+        },
+        {
+          "timestampMs": 6441,
+          "kneeAngleDeg": 139.16
+        },
+        {
+          "timestampMs": 6456.300000190735,
+          "kneeAngleDeg": 138.56
+        },
+        {
+          "timestampMs": 6471.400000095367,
+          "kneeAngleDeg": 137.38
+        },
+        {
+          "timestampMs": 6486.5,
+          "kneeAngleDeg": 136.27
+        },
+        {
+          "timestampMs": 6501.5,
+          "kneeAngleDeg": 135.27
+        },
+        {
+          "timestampMs": 6516.400000095367,
+          "kneeAngleDeg": 134.6
+        },
+        {
+          "timestampMs": 6531.400000095367,
+          "kneeAngleDeg": 133.97
+        },
+        {
+          "timestampMs": 6546.5,
+          "kneeAngleDeg": 133.27
+        },
+        {
+          "timestampMs": 6561.599999904633,
+          "kneeAngleDeg": 132.81
+        },
+        {
+          "timestampMs": 6576.599999904633,
+          "kneeAngleDeg": 132.09
+        },
+        {
+          "timestampMs": 6591.5,
+          "kneeAngleDeg": 131.38
+        },
+        {
+          "timestampMs": 6607.099999904633,
+          "kneeAngleDeg": 130.75
+        },
+        {
+          "timestampMs": 6622.599999904633,
+          "kneeAngleDeg": 130.54
+        },
+        {
+          "timestampMs": 6637.700000286102,
+          "kneeAngleDeg": 130.34
+        },
+        {
+          "timestampMs": 6652.700000286102,
+          "kneeAngleDeg": 130.15
+        },
+        {
+          "timestampMs": 6667.700000286102,
+          "kneeAngleDeg": 129.87
+        },
+        {
+          "timestampMs": 6682.5,
+          "kneeAngleDeg": 129.62
+        },
+        {
+          "timestampMs": 6697.700000286102,
+          "kneeAngleDeg": 129.14
+        },
+        {
+          "timestampMs": 6712.900000095367,
+          "kneeAngleDeg": 128.9
+        },
+        {
+          "timestampMs": 6727.900000095367,
+          "kneeAngleDeg": 128.82
+        },
+        {
+          "timestampMs": 6743,
+          "kneeAngleDeg": 128.81
+        },
+        {
+          "timestampMs": 6758.099999904633,
+          "kneeAngleDeg": 129.25
+        },
+        {
+          "timestampMs": 6773.200000286102,
+          "kneeAngleDeg": 129.41
+        },
+        {
+          "timestampMs": 6788.300000190735,
+          "kneeAngleDeg": 129.76
+        },
+        {
+          "timestampMs": 6803.599999904633,
+          "kneeAngleDeg": 130.85
+        },
+        {
+          "timestampMs": 6818.599999904633,
+          "kneeAngleDeg": 132.12
+        },
+        {
+          "timestampMs": 6833.800000190735,
+          "kneeAngleDeg": 133.08
+        },
+        {
+          "timestampMs": 6848.900000095367,
+          "kneeAngleDeg": 134.64
+        },
+        {
+          "timestampMs": 6864.400000095367,
+          "kneeAngleDeg": 136.64
+        },
+        {
+          "timestampMs": 6879.599999904633,
+          "kneeAngleDeg": 138.65
+        },
+        {
+          "timestampMs": 6895.200000286102,
+          "kneeAngleDeg": 140.19
+        },
+        {
+          "timestampMs": 6910.099999904633,
+          "kneeAngleDeg": 141.79
+        },
+        {
+          "timestampMs": 6925,
+          "kneeAngleDeg": 142.08
+        },
+        {
+          "timestampMs": 6940.300000190735,
+          "kneeAngleDeg": 142.46
+        },
+        {
+          "timestampMs": 6955.300000190735,
+          "kneeAngleDeg": 143.24
+        },
+        {
+          "timestampMs": 6970.599999904633,
+          "kneeAngleDeg": 143.38
+        },
+        {
+          "timestampMs": 6985.599999904633,
+          "kneeAngleDeg": 143.31
+        },
+        {
+          "timestampMs": 7000.700000286102,
+          "kneeAngleDeg": 143.21
+        },
+        {
+          "timestampMs": 7015.5,
+          "kneeAngleDeg": 143.19
+        },
+        {
+          "timestampMs": 7030.800000190735,
+          "kneeAngleDeg": 143.99
+        },
+        {
+          "timestampMs": 7045.800000190735,
+          "kneeAngleDeg": 144.88
+        },
+        {
+          "timestampMs": 7061,
+          "kneeAngleDeg": 146.59
+        },
+        {
+          "timestampMs": 7076.200000286102,
+          "kneeAngleDeg": 148.15
+        },
+        {
+          "timestampMs": 7091,
+          "kneeAngleDeg": 149.24
+        },
+        {
+          "timestampMs": 7106.599999904633,
+          "kneeAngleDeg": 150.43
+        },
+        {
+          "timestampMs": 7121.800000190735,
+          "kneeAngleDeg": 151.48
+        },
+        {
+          "timestampMs": 7137.200000286102,
+          "kneeAngleDeg": 152.63
+        },
+        {
+          "timestampMs": 7153,
+          "kneeAngleDeg": 153.66
+        },
+        {
+          "timestampMs": 7168.099999904633,
+          "kneeAngleDeg": 154.62
+        },
+        {
+          "timestampMs": 7183.099999904633,
+          "kneeAngleDeg": 155.55
+        },
+        {
+          "timestampMs": 7198.5,
+          "kneeAngleDeg": 156.64
+        },
+        {
+          "timestampMs": 7213.599999904633,
+          "kneeAngleDeg": 157.67
+        },
+        {
+          "timestampMs": 7228.700000286102,
+          "kneeAngleDeg": 158.59
+        },
+        {
+          "timestampMs": 7243.599999904633,
+          "kneeAngleDeg": 159.32
+        },
+        {
+          "timestampMs": 7259,
+          "kneeAngleDeg": 160.02
+        }
+      ]
+    },
+    {
+      "rom": 57.6,
+      "durationMs": 1331,
+      "minKneeAngle": 122.3,
+      "maxKneeAngle": 179.9,
+      "samples": [
+        {
+          "timestampMs": 9177.800000190735,
+          "kneeAngleDeg": 159.61
+        },
+        {
+          "timestampMs": 9192.800000190735,
+          "kneeAngleDeg": 158.88
+        },
+        {
+          "timestampMs": 9207.800000190735,
+          "kneeAngleDeg": 158.39
+        },
+        {
+          "timestampMs": 9222.800000190735,
+          "kneeAngleDeg": 157.89
+        },
+        {
+          "timestampMs": 9237.900000095367,
+          "kneeAngleDeg": 157.49
+        },
+        {
+          "timestampMs": 9252.800000190735,
+          "kneeAngleDeg": 156.71
+        },
+        {
+          "timestampMs": 9267.700000286102,
+          "kneeAngleDeg": 156.04
+        },
+        {
+          "timestampMs": 9282.599999904633,
+          "kneeAngleDeg": 155.55
+        },
+        {
+          "timestampMs": 9297.599999904633,
+          "kneeAngleDeg": 155.17
+        },
+        {
+          "timestampMs": 9312.700000286102,
+          "kneeAngleDeg": 154.82
+        },
+        {
+          "timestampMs": 9327.700000286102,
+          "kneeAngleDeg": 154.45
+        },
+        {
+          "timestampMs": 9342.800000190735,
+          "kneeAngleDeg": 154.07
+        },
+        {
+          "timestampMs": 9357.800000190735,
+          "kneeAngleDeg": 153.39
+        },
+        {
+          "timestampMs": 9373.300000190735,
+          "kneeAngleDeg": 152.47
+        },
+        {
+          "timestampMs": 9388.800000190735,
+          "kneeAngleDeg": 151.42
+        },
+        {
+          "timestampMs": 9404.200000286102,
+          "kneeAngleDeg": 150.51
+        },
+        {
+          "timestampMs": 9419.300000190735,
+          "kneeAngleDeg": 149.87
+        },
+        {
+          "timestampMs": 9434.300000190735,
+          "kneeAngleDeg": 148.96
+        },
+        {
+          "timestampMs": 9449.5,
+          "kneeAngleDeg": 147.74
+        },
+        {
+          "timestampMs": 9464.700000286102,
+          "kneeAngleDeg": 146.97
+        },
+        {
+          "timestampMs": 9479.700000286102,
+          "kneeAngleDeg": 145.99
+        },
+        {
+          "timestampMs": 9494.800000190735,
+          "kneeAngleDeg": 145.2
+        },
+        {
+          "timestampMs": 9509.700000286102,
+          "kneeAngleDeg": 144.53
+        },
+        {
+          "timestampMs": 9524.700000286102,
+          "kneeAngleDeg": 143.61
+        },
+        {
+          "timestampMs": 9539.700000286102,
+          "kneeAngleDeg": 142.88
+        },
+        {
+          "timestampMs": 9554.599999904633,
+          "kneeAngleDeg": 142.37
+        },
+        {
+          "timestampMs": 9569.800000190735,
+          "kneeAngleDeg": 141.34
+        },
+        {
+          "timestampMs": 9584.900000095367,
+          "kneeAngleDeg": 140.74
+        },
+        {
+          "timestampMs": 9600,
+          "kneeAngleDeg": 140.23
+        },
+        {
+          "timestampMs": 9615.400000095367,
+          "kneeAngleDeg": 139.32
+        },
+        {
+          "timestampMs": 9630.900000095367,
+          "kneeAngleDeg": 138.19
+        },
+        {
+          "timestampMs": 9646.200000286102,
+          "kneeAngleDeg": 137.09
+        },
+        {
+          "timestampMs": 9661.700000286102,
+          "kneeAngleDeg": 136.17
+        },
+        {
+          "timestampMs": 9677,
+          "kneeAngleDeg": 134.11
+        },
+        {
+          "timestampMs": 9691.900000095367,
+          "kneeAngleDeg": 132.56
+        },
+        {
+          "timestampMs": 9707.099999904633,
+          "kneeAngleDeg": 131.19
+        },
+        {
+          "timestampMs": 9722.099999904633,
+          "kneeAngleDeg": 130.24
+        },
+        {
+          "timestampMs": 9737.099999904633,
+          "kneeAngleDeg": 128.87
+        },
+        {
+          "timestampMs": 9752,
+          "kneeAngleDeg": 127.81
+        },
+        {
+          "timestampMs": 9767.400000095367,
+          "kneeAngleDeg": 127.08
+        },
+        {
+          "timestampMs": 9782.300000190735,
+          "kneeAngleDeg": 126.16
+        },
+        {
+          "timestampMs": 9797.099999904633,
+          "kneeAngleDeg": 125.69
+        },
+        {
+          "timestampMs": 9812.200000286102,
+          "kneeAngleDeg": 124.98
+        },
+        {
+          "timestampMs": 9827,
+          "kneeAngleDeg": 124.17
+        },
+        {
+          "timestampMs": 9842,
+          "kneeAngleDeg": 123.41
+        },
+        {
+          "timestampMs": 9857.5,
+          "kneeAngleDeg": 122.7
+        },
+        {
+          "timestampMs": 9872.900000095367,
+          "kneeAngleDeg": 122.49
+        },
+        {
+          "timestampMs": 9888.200000286102,
+          "kneeAngleDeg": 122.31
+        },
+        {
+          "timestampMs": 9903.099999904633,
+          "kneeAngleDeg": 122.29
+        },
+        {
+          "timestampMs": 9918.5,
+          "kneeAngleDeg": 122.53
+        },
+        {
+          "timestampMs": 9933.700000286102,
+          "kneeAngleDeg": 122.84
+        },
+        {
+          "timestampMs": 9948.700000286102,
+          "kneeAngleDeg": 123.04
+        },
+        {
+          "timestampMs": 9963.900000095367,
+          "kneeAngleDeg": 123.26
+        },
+        {
+          "timestampMs": 9978.900000095367,
+          "kneeAngleDeg": 123.36
+        },
+        {
+          "timestampMs": 9993.800000190735,
+          "kneeAngleDeg": 123.86
+        },
+        {
+          "timestampMs": 10009.300000190735,
+          "kneeAngleDeg": 124.26
+        },
+        {
+          "timestampMs": 10024.400000095367,
+          "kneeAngleDeg": 124.58
+        },
+        {
+          "timestampMs": 10039.5,
+          "kneeAngleDeg": 125.62
+        },
+        {
+          "timestampMs": 10054.200000286102,
+          "kneeAngleDeg": 126.58
+        },
+        {
+          "timestampMs": 10069.300000190735,
+          "kneeAngleDeg": 127.55
+        },
+        {
+          "timestampMs": 10084.200000286102,
+          "kneeAngleDeg": 128.57
+        },
+        {
+          "timestampMs": 10099.099999904633,
+          "kneeAngleDeg": 129.13
+        },
+        {
+          "timestampMs": 10114.200000286102,
+          "kneeAngleDeg": 129.82
+        },
+        {
+          "timestampMs": 10129.700000286102,
+          "kneeAngleDeg": 130.97
+        },
+        {
+          "timestampMs": 10144.900000095367,
+          "kneeAngleDeg": 132.15
+        },
+        {
+          "timestampMs": 10159.900000095367,
+          "kneeAngleDeg": 133.7
+        },
+        {
+          "timestampMs": 10175.200000286102,
+          "kneeAngleDeg": 135.2
+        },
+        {
+          "timestampMs": 10190,
+          "kneeAngleDeg": 136.02
+        },
+        {
+          "timestampMs": 10205.200000286102,
+          "kneeAngleDeg": 137.34
+        },
+        {
+          "timestampMs": 10220.200000286102,
+          "kneeAngleDeg": 139.22
+        },
+        {
+          "timestampMs": 10235.599999904633,
+          "kneeAngleDeg": 141.15
+        },
+        {
+          "timestampMs": 10250.700000286102,
+          "kneeAngleDeg": 142.33
+        },
+        {
+          "timestampMs": 10266,
+          "kneeAngleDeg": 143.75
+        },
+        {
+          "timestampMs": 10281.099999904633,
+          "kneeAngleDeg": 144.72
+        },
+        {
+          "timestampMs": 10296.099999904633,
+          "kneeAngleDeg": 146.11
+        },
+        {
+          "timestampMs": 10311.300000190735,
+          "kneeAngleDeg": 147.59
+        },
+        {
+          "timestampMs": 10326.5,
+          "kneeAngleDeg": 148.75
+        },
+        {
+          "timestampMs": 10341.400000095367,
+          "kneeAngleDeg": 149.97
+        },
+        {
+          "timestampMs": 10356.599999904633,
+          "kneeAngleDeg": 151.12
+        },
+        {
+          "timestampMs": 10372,
+          "kneeAngleDeg": 152.03
+        },
+        {
+          "timestampMs": 10387.5,
+          "kneeAngleDeg": 152.87
+        },
+        {
+          "timestampMs": 10402.800000190735,
+          "kneeAngleDeg": 154.22
+        },
+        {
+          "timestampMs": 10417.900000095367,
+          "kneeAngleDeg": 155.29
+        },
+        {
+          "timestampMs": 10433,
+          "kneeAngleDeg": 156.17
+        },
+        {
+          "timestampMs": 10448.200000286102,
+          "kneeAngleDeg": 157
+        },
+        {
+          "timestampMs": 10463.200000286102,
+          "kneeAngleDeg": 157.83
+        },
+        {
+          "timestampMs": 10478.599999904633,
+          "kneeAngleDeg": 158.87
+        },
+        {
+          "timestampMs": 10493.700000286102,
+          "kneeAngleDeg": 159.64
+        },
+        {
+          "timestampMs": 10508.599999904633,
+          "kneeAngleDeg": 160.17
+        }
+      ]
+    },
+    {
+      "rom": 62.6,
+      "durationMs": 1406,
+      "minKneeAngle": 117.4,
+      "maxKneeAngle": 179.9,
+      "samples": [
+        {
+          "timestampMs": 12417,
+          "kneeAngleDeg": 159.69
+        },
+        {
+          "timestampMs": 12432.099999904633,
+          "kneeAngleDeg": 159.28
+        },
+        {
+          "timestampMs": 12446.900000095367,
+          "kneeAngleDeg": 158.83
+        },
+        {
+          "timestampMs": 12462,
+          "kneeAngleDeg": 158.49
+        },
+        {
+          "timestampMs": 12477,
+          "kneeAngleDeg": 158.3
+        },
+        {
+          "timestampMs": 12492.099999904633,
+          "kneeAngleDeg": 158.17
+        },
+        {
+          "timestampMs": 12506.900000095367,
+          "kneeAngleDeg": 157.83
+        },
+        {
+          "timestampMs": 12521.800000190735,
+          "kneeAngleDeg": 157.24
+        },
+        {
+          "timestampMs": 12536.900000095367,
+          "kneeAngleDeg": 156.82
+        },
+        {
+          "timestampMs": 12551.800000190735,
+          "kneeAngleDeg": 156.48
+        },
+        {
+          "timestampMs": 12566.800000190735,
+          "kneeAngleDeg": 156.18
+        },
+        {
+          "timestampMs": 12582.099999904633,
+          "kneeAngleDeg": 155.54
+        },
+        {
+          "timestampMs": 12597.300000190735,
+          "kneeAngleDeg": 154.73
+        },
+        {
+          "timestampMs": 12612.800000190735,
+          "kneeAngleDeg": 153.84
+        },
+        {
+          "timestampMs": 12628.200000286102,
+          "kneeAngleDeg": 153.1
+        },
+        {
+          "timestampMs": 12643.599999904633,
+          "kneeAngleDeg": 152.48
+        },
+        {
+          "timestampMs": 12658.599999904633,
+          "kneeAngleDeg": 151.93
+        },
+        {
+          "timestampMs": 12673.599999904633,
+          "kneeAngleDeg": 151.17
+        },
+        {
+          "timestampMs": 12688.599999904633,
+          "kneeAngleDeg": 150.07
+        },
+        {
+          "timestampMs": 12703.800000190735,
+          "kneeAngleDeg": 149.14
+        },
+        {
+          "timestampMs": 12718.800000190735,
+          "kneeAngleDeg": 147.96
+        },
+        {
+          "timestampMs": 12733.700000286102,
+          "kneeAngleDeg": 146.94
+        },
+        {
+          "timestampMs": 12748.700000286102,
+          "kneeAngleDeg": 146.18
+        },
+        {
+          "timestampMs": 12763.800000190735,
+          "kneeAngleDeg": 145.44
+        },
+        {
+          "timestampMs": 12778.800000190735,
+          "kneeAngleDeg": 144.72
+        },
+        {
+          "timestampMs": 12793.599999904633,
+          "kneeAngleDeg": 144.08
+        },
+        {
+          "timestampMs": 12808.700000286102,
+          "kneeAngleDeg": 143.11
+        },
+        {
+          "timestampMs": 12823.599999904633,
+          "kneeAngleDeg": 142.18
+        },
+        {
+          "timestampMs": 12838.5,
+          "kneeAngleDeg": 141.4
+        },
+        {
+          "timestampMs": 12853.700000286102,
+          "kneeAngleDeg": 140.51
+        },
+        {
+          "timestampMs": 12869,
+          "kneeAngleDeg": 139.74
+        },
+        {
+          "timestampMs": 12884.400000095367,
+          "kneeAngleDeg": 139.12
+        },
+        {
+          "timestampMs": 12899.700000286102,
+          "kneeAngleDeg": 138.18
+        },
+        {
+          "timestampMs": 12914.599999904633,
+          "kneeAngleDeg": 137.48
+        },
+        {
+          "timestampMs": 12929.400000095367,
+          "kneeAngleDeg": 136.55
+        },
+        {
+          "timestampMs": 12944.900000095367,
+          "kneeAngleDeg": 135.41
+        },
+        {
+          "timestampMs": 12959.700000286102,
+          "kneeAngleDeg": 134.48
+        },
+        {
+          "timestampMs": 12974.800000190735,
+          "kneeAngleDeg": 133.65
+        },
+        {
+          "timestampMs": 12990,
+          "kneeAngleDeg": 132.62
+        },
+        {
+          "timestampMs": 13005.099999904633,
+          "kneeAngleDeg": 131.63
+        },
+        {
+          "timestampMs": 13020.200000286102,
+          "kneeAngleDeg": 130.36
+        },
+        {
+          "timestampMs": 13035.400000095367,
+          "kneeAngleDeg": 129.4
+        },
+        {
+          "timestampMs": 13050.700000286102,
+          "kneeAngleDeg": 128.52
+        },
+        {
+          "timestampMs": 13065.800000190735,
+          "kneeAngleDeg": 127.56
+        },
+        {
+          "timestampMs": 13081,
+          "kneeAngleDeg": 126.76
+        },
+        {
+          "timestampMs": 13095.900000095367,
+          "kneeAngleDeg": 126.21
+        },
+        {
+          "timestampMs": 13111.300000190735,
+          "kneeAngleDeg": 125.48
+        },
+        {
+          "timestampMs": 13126.5,
+          "kneeAngleDeg": 124.72
+        },
+        {
+          "timestampMs": 13141.800000190735,
+          "kneeAngleDeg": 124.16
+        },
+        {
+          "timestampMs": 13157,
+          "kneeAngleDeg": 123.52
+        },
+        {
+          "timestampMs": 13171.800000190735,
+          "kneeAngleDeg": 123.02
+        },
+        {
+          "timestampMs": 13186.700000286102,
+          "kneeAngleDeg": 122.41
+        },
+        {
+          "timestampMs": 13201.800000190735,
+          "kneeAngleDeg": 121.78
+        },
+        {
+          "timestampMs": 13216.400000095367,
+          "kneeAngleDeg": 121.37
+        },
+        {
+          "timestampMs": 13231.5,
+          "kneeAngleDeg": 120.8
+        },
+        {
+          "timestampMs": 13246.800000190735,
+          "kneeAngleDeg": 119.92
+        },
+        {
+          "timestampMs": 13262.200000286102,
+          "kneeAngleDeg": 119.31
+        },
+        {
+          "timestampMs": 13277.200000286102,
+          "kneeAngleDeg": 118.9
+        },
+        {
+          "timestampMs": 13292.300000190735,
+          "kneeAngleDeg": 118.33
+        },
+        {
+          "timestampMs": 13307.599999904633,
+          "kneeAngleDeg": 117.75
+        },
+        {
+          "timestampMs": 13322.800000190735,
+          "kneeAngleDeg": 117.53
+        },
+        {
+          "timestampMs": 13337.700000286102,
+          "kneeAngleDeg": 117.47
+        },
+        {
+          "timestampMs": 13352.700000286102,
+          "kneeAngleDeg": 117.38
+        },
+        {
+          "timestampMs": 13368,
+          "kneeAngleDeg": 117.45
+        },
+        {
+          "timestampMs": 13383.5,
+          "kneeAngleDeg": 117.5
+        },
+        {
+          "timestampMs": 13398.900000095367,
+          "kneeAngleDeg": 117.78
+        },
+        {
+          "timestampMs": 13414.099999904633,
+          "kneeAngleDeg": 118.79
+        },
+        {
+          "timestampMs": 13429.300000190735,
+          "kneeAngleDeg": 119.72
+        },
+        {
+          "timestampMs": 13444.300000190735,
+          "kneeAngleDeg": 120.39
+        },
+        {
+          "timestampMs": 13459.700000286102,
+          "kneeAngleDeg": 121.46
+        },
+        {
+          "timestampMs": 13475,
+          "kneeAngleDeg": 122.37
+        },
+        {
+          "timestampMs": 13490.099999904633,
+          "kneeAngleDeg": 123.27
+        },
+        {
+          "timestampMs": 13505.200000286102,
+          "kneeAngleDeg": 125.35
+        },
+        {
+          "timestampMs": 13520.300000190735,
+          "kneeAngleDeg": 127.15
+        },
+        {
+          "timestampMs": 13535.5,
+          "kneeAngleDeg": 128.51
+        },
+        {
+          "timestampMs": 13550.700000286102,
+          "kneeAngleDeg": 130.86
+        },
+        {
+          "timestampMs": 13565.700000286102,
+          "kneeAngleDeg": 133.27
+        },
+        {
+          "timestampMs": 13580.800000190735,
+          "kneeAngleDeg": 135.31
+        },
+        {
+          "timestampMs": 13596.099999904633,
+          "kneeAngleDeg": 138.11
+        },
+        {
+          "timestampMs": 13611.300000190735,
+          "kneeAngleDeg": 140.46
+        },
+        {
+          "timestampMs": 13626.700000286102,
+          "kneeAngleDeg": 143.35
+        },
+        {
+          "timestampMs": 13642.400000095367,
+          "kneeAngleDeg": 145.27
+        },
+        {
+          "timestampMs": 13657.700000286102,
+          "kneeAngleDeg": 146.44
+        },
+        {
+          "timestampMs": 13672.599999904633,
+          "kneeAngleDeg": 148.36
+        },
+        {
+          "timestampMs": 13687.700000286102,
+          "kneeAngleDeg": 150.17
+        },
+        {
+          "timestampMs": 13702.5,
+          "kneeAngleDeg": 151.37
+        },
+        {
+          "timestampMs": 13717.200000286102,
+          "kneeAngleDeg": 153.22
+        },
+        {
+          "timestampMs": 13732.099999904633,
+          "kneeAngleDeg": 154.78
+        },
+        {
+          "timestampMs": 13747.200000286102,
+          "kneeAngleDeg": 155.87
+        },
+        {
+          "timestampMs": 13762.099999904633,
+          "kneeAngleDeg": 156.97
+        },
+        {
+          "timestampMs": 13777.5,
+          "kneeAngleDeg": 157.81
+        },
+        {
+          "timestampMs": 13792.300000190735,
+          "kneeAngleDeg": 158.47
+        },
+        {
+          "timestampMs": 13807.5,
+          "kneeAngleDeg": 159.59
+        },
+        {
+          "timestampMs": 13822.599999904633,
+          "kneeAngleDeg": 160.63
+        }
+      ]
+    },
+    {
+      "rom": 69.1,
+      "durationMs": 1362,
+      "minKneeAngle": 110.8,
+      "maxKneeAngle": 179.8,
+      "samples": [
+        {
+          "timestampMs": 15718.200000286102,
+          "kneeAngleDeg": 159.95
+        },
+        {
+          "timestampMs": 15733.400000095367,
+          "kneeAngleDeg": 158.92
+        },
+        {
+          "timestampMs": 15748.300000190735,
+          "kneeAngleDeg": 157.78
+        },
+        {
+          "timestampMs": 15763.5,
+          "kneeAngleDeg": 156.79
+        },
+        {
+          "timestampMs": 15778.400000095367,
+          "kneeAngleDeg": 155.94
+        },
+        {
+          "timestampMs": 15793.300000190735,
+          "kneeAngleDeg": 155.07
+        },
+        {
+          "timestampMs": 15808.099999904633,
+          "kneeAngleDeg": 153.98
+        },
+        {
+          "timestampMs": 15823.099999904633,
+          "kneeAngleDeg": 152.97
+        },
+        {
+          "timestampMs": 15838.300000190735,
+          "kneeAngleDeg": 151.67
+        },
+        {
+          "timestampMs": 15853.599999904633,
+          "kneeAngleDeg": 150.85
+        },
+        {
+          "timestampMs": 15868.900000095367,
+          "kneeAngleDeg": 150.11
+        },
+        {
+          "timestampMs": 15884.5,
+          "kneeAngleDeg": 149.48
+        },
+        {
+          "timestampMs": 15899.5,
+          "kneeAngleDeg": 148.61
+        },
+        {
+          "timestampMs": 15914.599999904633,
+          "kneeAngleDeg": 148.04
+        },
+        {
+          "timestampMs": 15929.800000190735,
+          "kneeAngleDeg": 147.51
+        },
+        {
+          "timestampMs": 15944.900000095367,
+          "kneeAngleDeg": 146.83
+        },
+        {
+          "timestampMs": 15960,
+          "kneeAngleDeg": 146.29
+        },
+        {
+          "timestampMs": 15975.099999904633,
+          "kneeAngleDeg": 145.56
+        },
+        {
+          "timestampMs": 15990.099999904633,
+          "kneeAngleDeg": 142.81
+        },
+        {
+          "timestampMs": 16005.400000095367,
+          "kneeAngleDeg": 140.78
+        },
+        {
+          "timestampMs": 16020.900000095367,
+          "kneeAngleDeg": 139.41
+        },
+        {
+          "timestampMs": 16036,
+          "kneeAngleDeg": 138.63
+        },
+        {
+          "timestampMs": 16051,
+          "kneeAngleDeg": 137.78
+        },
+        {
+          "timestampMs": 16065.900000095367,
+          "kneeAngleDeg": 136.98
+        },
+        {
+          "timestampMs": 16080.800000190735,
+          "kneeAngleDeg": 136.37
+        },
+        {
+          "timestampMs": 16096.099999904633,
+          "kneeAngleDeg": 135.69
+        },
+        {
+          "timestampMs": 16111.599999904633,
+          "kneeAngleDeg": 134.92
+        },
+        {
+          "timestampMs": 16127.200000286102,
+          "kneeAngleDeg": 134.41
+        },
+        {
+          "timestampMs": 16142.5,
+          "kneeAngleDeg": 133.8
+        },
+        {
+          "timestampMs": 16157.300000190735,
+          "kneeAngleDeg": 133.17
+        },
+        {
+          "timestampMs": 16172.300000190735,
+          "kneeAngleDeg": 132.63
+        },
+        {
+          "timestampMs": 16187.700000286102,
+          "kneeAngleDeg": 131.6
+        },
+        {
+          "timestampMs": 16202.5,
+          "kneeAngleDeg": 130.12
+        },
+        {
+          "timestampMs": 16217.5,
+          "kneeAngleDeg": 128.79
+        },
+        {
+          "timestampMs": 16232.800000190735,
+          "kneeAngleDeg": 127.33
+        },
+        {
+          "timestampMs": 16247.900000095367,
+          "kneeAngleDeg": 126.29
+        },
+        {
+          "timestampMs": 16263.099999904633,
+          "kneeAngleDeg": 125.38
+        },
+        {
+          "timestampMs": 16278.300000190735,
+          "kneeAngleDeg": 123.91
+        },
+        {
+          "timestampMs": 16293.300000190735,
+          "kneeAngleDeg": 122.63
+        },
+        {
+          "timestampMs": 16308.5,
+          "kneeAngleDeg": 121.03
+        },
+        {
+          "timestampMs": 16323.700000286102,
+          "kneeAngleDeg": 119.88
+        },
+        {
+          "timestampMs": 16338.800000190735,
+          "kneeAngleDeg": 118.88
+        },
+        {
+          "timestampMs": 16354.300000190735,
+          "kneeAngleDeg": 117.56
+        },
+        {
+          "timestampMs": 16370,
+          "kneeAngleDeg": 115.64
+        },
+        {
+          "timestampMs": 16385.300000190735,
+          "kneeAngleDeg": 114.54
+        },
+        {
+          "timestampMs": 16400.700000286102,
+          "kneeAngleDeg": 113.24
+        },
+        {
+          "timestampMs": 16415.5,
+          "kneeAngleDeg": 112.48
+        },
+        {
+          "timestampMs": 16430.5,
+          "kneeAngleDeg": 111.94
+        },
+        {
+          "timestampMs": 16445.400000095367,
+          "kneeAngleDeg": 111.41
+        },
+        {
+          "timestampMs": 16460.900000095367,
+          "kneeAngleDeg": 111.06
+        },
+        {
+          "timestampMs": 16475.900000095367,
+          "kneeAngleDeg": 110.77
+        },
+        {
+          "timestampMs": 16490.900000095367,
+          "kneeAngleDeg": 110.78
+        },
+        {
+          "timestampMs": 16505.900000095367,
+          "kneeAngleDeg": 110.93
+        },
+        {
+          "timestampMs": 16520.900000095367,
+          "kneeAngleDeg": 111.11
+        },
+        {
+          "timestampMs": 16536.200000286102,
+          "kneeAngleDeg": 111.42
+        },
+        {
+          "timestampMs": 16551.200000286102,
+          "kneeAngleDeg": 111.53
+        },
+        {
+          "timestampMs": 16566.400000095367,
+          "kneeAngleDeg": 112.3
+        },
+        {
+          "timestampMs": 16581.599999904633,
+          "kneeAngleDeg": 113.66
+        },
+        {
+          "timestampMs": 16596.700000286102,
+          "kneeAngleDeg": 115.31
+        },
+        {
+          "timestampMs": 16612.200000286102,
+          "kneeAngleDeg": 117.43
+        },
+        {
+          "timestampMs": 16627.400000095367,
+          "kneeAngleDeg": 119.31
+        },
+        {
+          "timestampMs": 16642.800000190735,
+          "kneeAngleDeg": 120.69
+        },
+        {
+          "timestampMs": 16657.700000286102,
+          "kneeAngleDeg": 122.1
+        },
+        {
+          "timestampMs": 16672.800000190735,
+          "kneeAngleDeg": 123.35
+        },
+        {
+          "timestampMs": 16687.800000190735,
+          "kneeAngleDeg": 124.27
+        },
+        {
+          "timestampMs": 16702.700000286102,
+          "kneeAngleDeg": 125.58
+        },
+        {
+          "timestampMs": 16717.599999904633,
+          "kneeAngleDeg": 126.77
+        },
+        {
+          "timestampMs": 16732.5,
+          "kneeAngleDeg": 127.74
+        },
+        {
+          "timestampMs": 16747.300000190735,
+          "kneeAngleDeg": 128.85
+        },
+        {
+          "timestampMs": 16762.300000190735,
+          "kneeAngleDeg": 129.83
+        },
+        {
+          "timestampMs": 16777.400000095367,
+          "kneeAngleDeg": 130.55
+        },
+        {
+          "timestampMs": 16792.300000190735,
+          "kneeAngleDeg": 132.16
+        },
+        {
+          "timestampMs": 16807.300000190735,
+          "kneeAngleDeg": 134.08
+        },
+        {
+          "timestampMs": 16822.700000286102,
+          "kneeAngleDeg": 135.74
+        },
+        {
+          "timestampMs": 16838,
+          "kneeAngleDeg": 138.28
+        },
+        {
+          "timestampMs": 16853.400000095367,
+          "kneeAngleDeg": 140.25
+        },
+        {
+          "timestampMs": 16868.700000286102,
+          "kneeAngleDeg": 142.1
+        },
+        {
+          "timestampMs": 16883.900000095367,
+          "kneeAngleDeg": 143.86
+        },
+        {
+          "timestampMs": 16899.099999904633,
+          "kneeAngleDeg": 144.95
+        },
+        {
+          "timestampMs": 16914.200000286102,
+          "kneeAngleDeg": 146.45
+        },
+        {
+          "timestampMs": 16929.400000095367,
+          "kneeAngleDeg": 147.8
+        },
+        {
+          "timestampMs": 16944.300000190735,
+          "kneeAngleDeg": 148.84
+        },
+        {
+          "timestampMs": 16959.300000190735,
+          "kneeAngleDeg": 150.22
+        },
+        {
+          "timestampMs": 16974.300000190735,
+          "kneeAngleDeg": 151.78
+        },
+        {
+          "timestampMs": 16989.300000190735,
+          "kneeAngleDeg": 153.06
+        },
+        {
+          "timestampMs": 17004.200000286102,
+          "kneeAngleDeg": 154.36
+        },
+        {
+          "timestampMs": 17019.300000190735,
+          "kneeAngleDeg": 155.82
+        },
+        {
+          "timestampMs": 17034.5,
+          "kneeAngleDeg": 156.97
+        },
+        {
+          "timestampMs": 17049.599999904633,
+          "kneeAngleDeg": 158.16
+        },
+        {
+          "timestampMs": 17064.599999904633,
+          "kneeAngleDeg": 159.34
+        },
+        {
+          "timestampMs": 17079.700000286102,
+          "kneeAngleDeg": 160.4
+        }
+      ]
+    }
+  ],
+  "baselineROM": null,
+  "averageROM": 59.9,
+  "trackingQuality": 1,
+  "formFeedback": [
+    {
+      "timestampMs": 3824.5999999046326,
+      "code": "not_deep_enough",
+      "message": "再蹲低一点"
+    }
+  ],
+  "angleSource": "2d"
+}

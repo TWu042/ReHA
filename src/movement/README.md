@@ -26,7 +26,7 @@ getMovementState();            // 训练中随时读：{ phase, repCount, kneeAn
 
 ### MovementResult（训练结束时的数据）
 
-例子：[mock/session_completed_example.json](../../mock/session_completed_example.json)（用合成数据跑出来的，格式和真实一样）。
+例子：[mock/session_completed_example.json](../../mock/session_completed_example.json)（合成数据）、[mock/session_completed_real_example.json](../../mock/session_completed_real_example.json)（真人录像，有纠错事件）。
 
 | 字段 | 含义 |
 |---|---|

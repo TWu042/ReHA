@@ -36,7 +36,9 @@ node mock/generateSquat.js   # 在仓库根目录运行，一次生成下面 7 �
 
 ## 数据示例
 
-`session_completed_example.json`：训练结束时 `session_completed` 的内容，用 `synthetic_squat.json` 跑出来的。格式和真实完全一样，但数字比真人理想（ROM 约 79°、30 帧/秒）。重新生成：`node tests/movementModule.test.js --write-example`。
+`session_completed_example.json`：训练结束时 `session_completed` 的内容，用 `synthetic_squat.json` 跑出来的。格式和真实完全一样，但数字比真人理想（3 次、ROM 约 80°、30 帧/秒、没有纠错）。重新生成：`node tests/movementModule.test.js --write-example`。
+
+`session_completed_real_example.json`：用真人录像 `p1_normal_5_*` 跑出来的（4 次、平均 ROM 59.9°、1 次"没蹲到底"纠错、angleSource 2d），数字更接近真实情况。重新生成：`node mock/replay.js mock/p1_normal_5_2026-10-24T20-07-57.148Z.json --write mock/session_completed_real_example.json`。
 
 ## 录制回放（`replay.js`）
 
