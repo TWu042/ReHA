@@ -84,6 +84,7 @@ export function createRepCounter({ aspectRatio = 1, config = {}, angleMode = 'au
     }
     let completedRep = null;
     let abortedRep = null;
+    const previousTimestampMs = lastValidTimestampMs;
 
     // 丢失追踪太久：放弃这一次，平滑也重新开始（旧的平滑值已经不代表现在的姿势）
     if (lastValidTimestampMs != null && t - lastValidTimestampMs > cfg.TRACKING_GAP_MS) {
@@ -98,9 +99,13 @@ export function createRepCounter({ aspectRatio = 1, config = {}, angleMode = 'au
     }
     lastValidTimestampMs = t;
 
-    smoothedAngle = smoothedAngle == null
-      ? raw
-      : cfg.SMOOTHING_ALPHA * raw + (1 - cfg.SMOOTHING_ALPHA) * smoothedAngle;
+    // 按时间平滑：两帧间隔越长，新值的权重越大，所以帧率高低不影响平滑效果
+    if (smoothedAngle == null) {
+      smoothedAngle = raw;
+    } else {
+      const alpha = 1 - Math.exp(-(t - previousTimestampMs) / cfg.SMOOTHING_TIME_MS);
+      smoothedAngle = alpha * raw + (1 - alpha) * smoothedAngle;
+    }
     const a = smoothedAngle;
 
     if (waitingForStand) {
