@@ -64,8 +64,20 @@ eventBus.on(EVENTS.REP_COMPLETED, e => log(`✓ 第 ${e.repCount} 次，ROM ${e.
 eventBus.on(EVENTS.FORM_FEEDBACK, e => log(`✎ 纠错：${e.message}`));
 
 // ---------- 开始 / 停止 ----------
+// 每轮自动录制：开始一轮就从头录，点"下载本轮录制"下载这一轮到现在的数据
+function restartRecording() {
+  try {
+    if (recorder.isRecording) recorder.stop();
+    if (recorder.frameCount) recorder.clear();
+    recorder.start();
+  } catch (error) {
+    log(`⚠ 录制出错：${error.message}`);
+  }
+}
+
 function beginRound() {
   startMovement();
+  restartRecording();
   history = [];
   offHistory?.();
   // 在 startMovement 之后订阅，保证读到的是这一帧处理完的状态
@@ -78,6 +90,7 @@ function beginRound() {
 }
 
 function endRound() {
+  if (recorder.isRecording) recorder.stop();   // 保留这一轮的数据，停止后仍可下载
   offHistory?.();
   offHistory = null;
   const result = stopMovement();
@@ -94,7 +107,6 @@ function stopAll() {
   request++;
   if (running) endRound();
   running = false;
-  if (recorder.isRecording) recorder.stop();
   tracker.stop();
   camera.stop();
   cancelAnimationFrame(rafId);
@@ -106,8 +118,7 @@ function setButtons() {
   $('start').disabled = running;
   $('newRound').disabled = !running;
   $('stop').disabled = !running;
-  $('record').disabled = !running || recorder.isRecording;
-  $('saveRecord').disabled = !recorder.isRecording;
+  $('saveRecord').disabled = recorder.frameCount === 0;
 }
 
 $('start').onclick = async () => {
@@ -145,25 +156,17 @@ $('stop').onclick = () => {
 };
 
 // ---------- 录制 ----------
-$('record').onclick = () => {
-  try {
-    if (recorder.frameCount) recorder.clear();
-    recorder.start();
-    log('● 开始录制');
-  } catch (error) {
-    statusEl.textContent = error.message;
-  }
-  setButtons();
-};
-
 $('saveRecord').onclick = () => {
-  recorder.stop();
+  if (recorder.isRecording) recorder.stop();
+  if (!recorder.frameCount) return;
   const who = ($('tester').value.trim() || 'anon').replace(/[^\w一-龥-]/g, '_');
   const actual = $('actual').value ? `${$('actual').value}reps` : 'unknown';
   const stamp = new Date().toISOString().replaceAll(':', '-');
   recorder.download(`p2_${who}_${actual}_${stamp}.json`);
-  log(`● 已下载录制，${recorder.frameCount} 帧`);
+  log(`● 已下载录制，${recorder.frameCount} 帧（${actual}）`);
   recorder.clear();
+  // 还在识别就接着录下一段
+  if (running) recorder.start();
   setButtons();
 };
 
@@ -284,6 +287,7 @@ function draw() {
   drawSkeleton();
   drawChart();
   drawStats();
+  setButtons();   // 录到第一帧后"下载本轮录制"变为可点
   if (running) rafId = requestAnimationFrame(draw);
 }
 

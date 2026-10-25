@@ -78,13 +78,12 @@
         </div>
 
         <div class="card">
-          <h2>录制（给队友测试时顺便存数据，之后调参用）</h2>
+          <h2>录制（每轮自动录，之后调参用）</h2>
           <div class="row">
             <input id="tester" type="text" placeholder="测试人" />
-            <button id="record" disabled>开始录制</button>
-            <button id="saveRecord" disabled>停止并下载</button>
+            <button id="saveRecord" disabled>下载本轮录制</button>
           </div>
-          <p class="hint" style="margin:6px 0 0">文件下载到浏览器的下载目录，放进仓库的 mock/，保留 p2_ 开头。</p>
+          <p class="hint" style="margin:6px 0 0">启动摄像头或点"新一轮"就自动从头录。做完后先填"实际做了几次"，再点下载。<br>文件在浏览器的下载目录，放进仓库的 mock/，保留 p2_ 开头。</p>
         </div>
 
         <div class="card">
