@@ -3,14 +3,15 @@ import { eventBus } from '../shared/eventBus.js'
 import { QUALITY } from './config.js'
 import { assessPose, copyLandmarks } from './quality.js'
 
-// 建议的实时识别最高帧率（P5 训练页使用）：限制推理次数，减轻低端电脑负担。计数按时间平滑，15 帧/秒不影响次数和 ROM。
+// 实时识别的最高帧率（P5）：限制推理次数，不限的话电脑太卡、跑不动。默认就限，所有页面都受保护。
+// 计数按时间平滑，15 帧/秒不影响次数和 ROM（见 tests/robustness.test.js）。只有模拟高帧率的单元测试才传 maxFps: Infinity。
 export const MAX_LIVE_FPS = 15
 
 export function createPoseTracker(videoEl, {
   bus = eventBus,
   quality = QUALITY,
   modelAssetPath,
-  maxFps = Infinity,          // 默认不限；P5 训练页传 MAX_LIVE_FPS
+  maxFps = MAX_LIVE_FPS,
   // 注入点用于无摄像头的生命周期测试，不生成假真人数据。
   createModel = async () => (await import('./landmarker.js')).createLandmarker(modelAssetPath),
   onError = () => {},

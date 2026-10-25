@@ -98,7 +98,7 @@ function harness(t) {
     detectForVideo: t.mock.fn(() => ({ landmarks: detected ? [detected] : [] })),
   }
   const createModel = t.mock.fn(async () => model)
-  const tracker = createPoseTracker(video, { bus, createModel })
+  const tracker = createPoseTracker(video, { bus, createModel, maxFps: Infinity })   // 测试按 30 帧/秒推进，关掉限流
   function step(delta = 33, fresh = true) {
     clock += delta
     if (fresh) video.currentTime += delta / 1000
@@ -265,9 +265,9 @@ test('权限尚未返回时停止，会释放晚到的视频流', async t => {
   assert.equal(video.srcObject, null)
 })
 
-test('maxFps 限制实时推理次数；默认不限', async t => {
+test('默认限制在 15 帧/秒；测试里可关掉限流', async t => {
   const h = harness(t)
-  const limited = createPoseTracker(h.video, { bus: h.bus, createModel: h.createModel, maxFps: 15 })
+  const limited = createPoseTracker(h.video, { bus: h.bus, createModel: h.createModel })   // 不传 maxFps，用默认值
   t.after(() => limited.stop())
   await limited.start()
   for (let i = 0; i < 10; i++) h.step(33)   // 约 30 帧/秒的视频，持续约 330ms
