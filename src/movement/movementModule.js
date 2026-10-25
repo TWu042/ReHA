@@ -102,7 +102,7 @@ export function stopMovement() {
     repCount,
     reps: reps.map(r => ({
       rom: round1(r.romDeg),
-      durationMs: r.durationMs,
+      durationMs: Math.round(r.durationMs),
       minKneeAngle: round1(r.minKneeAngle),
       maxKneeAngle: round1(r.maxKneeAngle),
       // 这次动作的逐帧膝角（给 P3 算平稳度）。kneeAngleDeg 用平滑后的值，和算 ROM 用的是同一组数。
