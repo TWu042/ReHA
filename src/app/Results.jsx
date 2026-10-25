@@ -27,14 +27,16 @@ export default function Results({ result, analysis, onHome }) {
       ? ""
       : summary.baselineROM != null
         ? `vs. your baseline ${summary.baselineROM.toFixed(1)}°`
-        : "Baseline builds from earlier days";
+        : "Baseline builds after your first session";
 
     const consistencyNote =
       summary && summary.completedReps === 0 ? "Needs at least 1 rep" : "How even your reps were";
 
     const qualityNote = summary?.qualityScore != null
       ? "Range 40% · Smoothness 30% · Consistency 30%"
-      : "Coming soon";
+      : summary?.rangeScore == null
+        ? "Available once you have a baseline"
+        : "Not enough data yet";
   
     return (
       <section className="results-page">

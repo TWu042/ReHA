@@ -15,26 +15,6 @@ export default function Home({ onStart }) {
       <button className="primary-button" onClick={onStart}>
         Start Your Adventure →
       </button>
-
-      <div className="feature-grid">
-        <div className="feature-card">
-          <div className="feature-icon">🎮</div>
-          <h3>Interactive Games</h3>
-          <p>Make every movement fun</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-icon">📊</div>
-          <h3>Track Progress</h3>
-          <p>Celebrate every milestone</p>
-        </div>
-
-        <div className="feature-card">
-          <div className="feature-icon">🌿</div>
-          <h3>Grow Stronger</h3>
-          <p>One step at a time</p>
-        </div>
-      </div>
     </section>
   );
 }

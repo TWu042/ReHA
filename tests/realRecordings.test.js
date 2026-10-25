@@ -17,6 +17,8 @@ const CASES = [
   { prefix: 'p1_shallow_3_',      expected: 0, note: '浅蹲 3 次' },
   { prefix: 'p1_bottom_pause_2_', expected: 2, note: '底部停 2 秒 × 2' },
   { prefix: 'p1_tracking_loss_',  expected: 0, note: '出框与恢复，没有完整深蹲' },
+  // 训练页计数用 2D（Training.jsx）。这段手机竖屏视频用 3D 时站直只有约 155°，一次都数不到
+  { prefix: 'p2_video_unknown_',  expected: 4, note: '上传视频深蹲 4 次（2D）', angleMode: '2d' },
 ];
 
 const files = existsSync(MOCK_DIR) ? readdirSync(MOCK_DIR) : [];
@@ -24,14 +26,14 @@ let failed = 0;
 console.log(`${'录制'.padEnd(30)} 期望  实际  结果`);
 console.log('-'.repeat(52));
 
-for (const { prefix, expected, note } of CASES) {
+for (const { prefix, expected, note, angleMode } of CASES) {
   const name = files.find(n => n.startsWith(prefix) && n.endsWith('.json'));
   if (!name) {
     failed++;
     console.log(`${note.padEnd(26)}   ${String(expected).padStart(3)}     -  ✗ 找不到 mock/${prefix}*.json`);
     continue;
   }
-  const { repCount } = analyzeFrames(loadRecording(join(MOCK_DIR, name)));
+  const { repCount } = analyzeFrames(loadRecording(join(MOCK_DIR, name)), { angleMode });
   const pass = repCount === expected;
   if (!pass) failed++;
   console.log(`${note.padEnd(26)}   ${String(expected).padStart(3)}  ${String(repCount).padStart(4)}  ${pass ? '✓ 通过' : '✗ 失败'}`);

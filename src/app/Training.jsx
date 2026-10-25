@@ -582,7 +582,9 @@ export default function Training({ onFinish, onActiveChange }) {
 
       if (!started || !mountedRef.current) return;
 
-      startMovement();
+      // 计数用 2D：3D 的站直角度随拍摄角度变化（上传视频站直只有 153–159°，到不了 160° 站直阈值；
+      // 摄像头下浅蹲又会被算进去），2D 已用真人录像校准过。前倾检测继续用 3D 躯干角度。
+      startMovement({ angleMode: "2d", feedbackAngleMode: "auto" });
       movementStarted = true;
       activeRef.current = true;
 

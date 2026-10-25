@@ -49,6 +49,8 @@ function handlePoseFrame(poseFrame) {
 /**
  * 开始一次训练。正在训练时再调用，会先结束上一次（不发 session_completed），重新开始。
  * @param {object} [options]  原样传给 createRepCounter，例如 { aspectRatio: 16 / 9 }
+ * @param {string} [options.angleMode]          计数用的角度：'auto'（有 3D 就用 3D）/ '2d' / '3d'
+ * @param {string} [options.feedbackAngleMode]  纠错（前倾）用的角度，默认和 angleMode 相同
  */
 export function startMovement(options = {}) {
   if (unsubscribe) unsubscribe();
@@ -62,7 +64,7 @@ export function startMovement(options = {}) {
     formFeedback.push({ ...feedback });
   });
   unsubscribe = eventBus.on(EVENTS.POSE_FRAME, handlePoseFrame);
-  startFormFeedback(options);
+  startFormFeedback({ ...options, angleMode: options.feedbackAngleMode ?? options.angleMode });
 }
 
 /**
