@@ -308,6 +308,7 @@ git push
 | p1_*.json（4 段真人录制）                 | P1       | ✅ 已完成  | 真实数据调参、回归测试、做回放             |
 | p2_*.json                                 | 任何人   | 随时补充   | 用 P2 测试页录的队友数据（见第 12 节）     |
 | session_completed_example.json            | P2       | ✅ 已完成  | 训练结束时的数据格式示例，给 P3 对接       |
+| session_completed_real_example.json       | P2       | ✅ 已完成  | 同上，用真人录像跑出来的                   |
 | mockPlayer.js                             | P5       | ⏳ 还没做  | 不开摄像头播放数据、发假事件               |
 | sessions.js                               | P3       | ⏳ 还没做  | 画趋势图                                   |
 
@@ -445,7 +446,7 @@ export const FEEDBACK = {
 
 **TrackingLost（P1）：**进入无效状态时发一次。`reason` 为 `no_person`、`incomplete_landmarks`、`low_visibility`、`out_of_frame`、`video_stalled`、`detection_error`。没有单独的"恢复"事件，之后 `pose_frame.valid === true` 就是恢复了。
 
-**MovementResult（P2）：**`stopMovement()` 的返回值，也是 `session_completed` 的内容。例子见 `mock/session_completed_example.json`。
+**MovementResult（P2）：**`stopMovement()` 的返回值，也是 `session_completed` 的内容。例子见 `mock/session_completed_example.json`（合成）和 `mock/session_completed_real_example.json`（真人）。
 - `repCount`：有效次数（注意 P2 这里叫 `repCount`，P3 的 SessionSummary 里叫 `completedReps`）
 - `reps`：每次有效深蹲一项。没蹲到底、太快、中途丢失追踪的不在里面；一次都没有时为 `[]`
   - `rom` = 下蹲前站立时的最大膝角 − 这次的最低膝角（平滑后），保留 1 位小数
