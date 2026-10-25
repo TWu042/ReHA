@@ -1,0 +1,301 @@
+{
+  "note": "上传视频 10 帧/秒逐帧分析，2D 计数（与训练页相同设置）。summary1=第一次（无历史），summary2=同一天第二次（以第一次为基线）",
+  "summary1": {
+    "sessionId": "video-1",
+    "date": "2026-10-25",
+    "createdAt": "2026-10-25T02:00:00.000Z",
+    "isMock": false,
+    "angleSource": "2d",
+    "completedReps": 4,
+    "averageROM": 82.5,
+    "baselineROM": null,
+    "trackingQuality": 1,
+    "rangeScore": null,
+    "consistencyScore": 95.553806497627,
+    "smoothnessScore": 37.645752304966805,
+    "qualityScore": null
+  },
+  "summary2": {
+    "sessionId": "video-2",
+    "date": "2026-10-25",
+    "createdAt": "2026-10-25T02:05:00.000Z",
+    "isMock": false,
+    "angleSource": "2d",
+    "completedReps": 4,
+    "averageROM": 82.5,
+    "baselineROM": 82.5,
+    "trackingQuality": 1,
+    "rangeScore": 100,
+    "consistencyScore": 95.553806497627,
+    "smoothnessScore": 37.645752304966805,
+    "qualityScore": 79.95986764077813
+  },
+  "perRep": [
+    {
+      "rep": 1,
+      "rom": 82.4,
+      "durationMs": 1100,
+      "minKneeAngle": 96,
+      "maxKneeAngle": 178.4,
+      "sampleCount": 12,
+      "jitterIndex": 1.718,
+      "smoothness": 42.4
+    },
+    {
+      "rep": 2,
+      "rom": 77.7,
+      "durationMs": 1000,
+      "minKneeAngle": 101.7,
+      "maxKneeAngle": 179.4,
+      "sampleCount": 11,
+      "jitterIndex": 2.096,
+      "smoothness": 35.1
+    },
+    {
+      "rep": 3,
+      "rom": 81.8,
+      "durationMs": 1100,
+      "minKneeAngle": 97.3,
+      "maxKneeAngle": 179.2,
+      "sampleCount": 12,
+      "jitterIndex": 2.25,
+      "smoothness": 32.5
+    },
+    {
+      "rep": 4,
+      "rom": 88,
+      "durationMs": 1200,
+      "minKneeAngle": 91.5,
+      "maxKneeAngle": 179.5,
+      "sampleCount": 13,
+      "jitterIndex": 1.799,
+      "smoothness": 40.7
+    }
+  ],
+  "reps": [
+    {
+      "rom": 82.4,
+      "durationMs": 1100,
+      "minKneeAngle": 96,
+      "maxKneeAngle": 178.4,
+      "samples": [
+        {
+          "timestampMs": 700,
+          "kneeAngleDeg": 152.56
+        },
+        {
+          "timestampMs": 800,
+          "kneeAngleDeg": 146.14
+        },
+        {
+          "timestampMs": 900,
+          "kneeAngleDeg": 134.77
+        },
+        {
+          "timestampMs": 1000,
+          "kneeAngleDeg": 118.26
+        },
+        {
+          "timestampMs": 1100,
+          "kneeAngleDeg": 102.57
+        },
+        {
+          "timestampMs": 1200,
+          "kneeAngleDeg": 95.99
+        },
+        {
+          "timestampMs": 1300,
+          "kneeAngleDeg": 97.91
+        },
+        {
+          "timestampMs": 1400,
+          "kneeAngleDeg": 107.11
+        },
+        {
+          "timestampMs": 1500,
+          "kneeAngleDeg": 124.74
+        },
+        {
+          "timestampMs": 1600,
+          "kneeAngleDeg": 138.96
+        },
+        {
+          "timestampMs": 1700,
+          "kneeAngleDeg": 149.95
+        },
+        {
+          "timestampMs": 1800,
+          "kneeAngleDeg": 161.6
+        }
+      ]
+    },
+    {
+      "rom": 77.7,
+      "durationMs": 1000,
+      "minKneeAngle": 101.7,
+      "maxKneeAngle": 179.4,
+      "samples": [
+        {
+          "timestampMs": 3200,
+          "kneeAngleDeg": 157.17
+        },
+        {
+          "timestampMs": 3300,
+          "kneeAngleDeg": 148.01
+        },
+        {
+          "timestampMs": 3400,
+          "kneeAngleDeg": 130.99
+        },
+        {
+          "timestampMs": 3500,
+          "kneeAngleDeg": 112.84
+        },
+        {
+          "timestampMs": 3600,
+          "kneeAngleDeg": 102.11
+        },
+        {
+          "timestampMs": 3700,
+          "kneeAngleDeg": 101.74
+        },
+        {
+          "timestampMs": 3800,
+          "kneeAngleDeg": 102.29
+        },
+        {
+          "timestampMs": 3900,
+          "kneeAngleDeg": 121.52
+        },
+        {
+          "timestampMs": 4000,
+          "kneeAngleDeg": 135.29
+        },
+        {
+          "timestampMs": 4100,
+          "kneeAngleDeg": 146.89
+        },
+        {
+          "timestampMs": 4200,
+          "kneeAngleDeg": 161.08
+        }
+      ]
+    },
+    {
+      "rom": 81.8,
+      "durationMs": 1100,
+      "minKneeAngle": 97.3,
+      "maxKneeAngle": 179.2,
+      "samples": [
+        {
+          "timestampMs": 5600,
+          "kneeAngleDeg": 155.38
+        },
+        {
+          "timestampMs": 5700,
+          "kneeAngleDeg": 146.8
+        },
+        {
+          "timestampMs": 5800,
+          "kneeAngleDeg": 130.28
+        },
+        {
+          "timestampMs": 5900,
+          "kneeAngleDeg": 110.27
+        },
+        {
+          "timestampMs": 6000,
+          "kneeAngleDeg": 98.75
+        },
+        {
+          "timestampMs": 6100,
+          "kneeAngleDeg": 97.33
+        },
+        {
+          "timestampMs": 6200,
+          "kneeAngleDeg": 99.85
+        },
+        {
+          "timestampMs": 6300,
+          "kneeAngleDeg": 107.82
+        },
+        {
+          "timestampMs": 6400,
+          "kneeAngleDeg": 121.81
+        },
+        {
+          "timestampMs": 6500,
+          "kneeAngleDeg": 141.33
+        },
+        {
+          "timestampMs": 6600,
+          "kneeAngleDeg": 163.67
+        },
+        {
+          "timestampMs": 6700,
+          "kneeAngleDeg": 172.3
+        }
+      ]
+    },
+    {
+      "rom": 88,
+      "durationMs": 1200,
+      "minKneeAngle": 91.5,
+      "maxKneeAngle": 179.5,
+      "samples": [
+        {
+          "timestampMs": 7900,
+          "kneeAngleDeg": 158.69
+        },
+        {
+          "timestampMs": 8000,
+          "kneeAngleDeg": 150.97
+        },
+        {
+          "timestampMs": 8100,
+          "kneeAngleDeg": 142.71
+        },
+        {
+          "timestampMs": 8200,
+          "kneeAngleDeg": 132.45
+        },
+        {
+          "timestampMs": 8300,
+          "kneeAngleDeg": 115.04
+        },
+        {
+          "timestampMs": 8400,
+          "kneeAngleDeg": 95.95
+        },
+        {
+          "timestampMs": 8500,
+          "kneeAngleDeg": 91.51
+        },
+        {
+          "timestampMs": 8600,
+          "kneeAngleDeg": 94.62
+        },
+        {
+          "timestampMs": 8700,
+          "kneeAngleDeg": 101.92
+        },
+        {
+          "timestampMs": 8800,
+          "kneeAngleDeg": 114.77
+        },
+        {
+          "timestampMs": 8900,
+          "kneeAngleDeg": 134.33
+        },
+        {
+          "timestampMs": 9000,
+          "kneeAngleDeg": 155.9
+        },
+        {
+          "timestampMs": 9100,
+          "kneeAngleDeg": 170.14
+        }
+      ]
+    }
+  ]
+}
