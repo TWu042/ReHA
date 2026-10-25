@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Home from "./app/Home";
 import Training from "./app/Training";
 import Results from "./app/Results";
@@ -14,6 +14,11 @@ export default function App() {
 
   // P3 analytics summary for that session (scores, baseline)
   const [analysis, setAnalysis] = useState(null);
+
+  // True while training runs: nav is disabled so a misclick can't end the session
+  const [trainingActive, setTrainingActive] = useState(false);
+  const handleActiveChange = useCallback((active) => setTrainingActive(active), []);
+  const navTitle = trainingActive ? "Finish training first" : undefined;
 
   function handleStart() {
     // Reset previous session data
@@ -49,15 +54,15 @@ export default function App() {
         <div className="brand">✦ ReHA</div>
 
         <nav>
-          <button onClick={handleHome}>
+          <button onClick={handleHome} disabled={trainingActive} title={navTitle}>
             Home
           </button>
 
-          <button onClick={handleStart}>
+          <button onClick={handleStart} disabled={trainingActive} title={navTitle}>
             Training
           </button>
 
-          <button onClick={() => setPage("results")}>
+          <button onClick={() => setPage("results")} disabled={trainingActive} title={navTitle}>
             Results
           </button>
         </nav>
@@ -69,7 +74,7 @@ export default function App() {
         )}
 
         {page === "training" && (
-          <Training onFinish={handleFinish} />
+          <Training onFinish={handleFinish} onActiveChange={handleActiveChange} />
         )}
 
         {page === "results" && (

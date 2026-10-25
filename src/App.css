@@ -629,3 +629,22 @@ button {
   font-size: 13px;
   opacity: 0.7;
 }
+
+/* Prompt shown while the counter waits for the user to stand up straight */
+.stand-prompt {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  background: #e8f0fe;
+  color: #1d5fd1;
+}
+
+/* Nav is locked during training */
+.navbar nav button:disabled,
+.navbar nav button:disabled:hover {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: #ffffff18;
+  transform: none;
+}

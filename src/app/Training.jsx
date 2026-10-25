@@ -6,6 +6,7 @@ import { createPoseTracker, MAX_LIVE_FPS } from "../pose/poseTracker.js";
 import {
   startMovement,
   stopMovement,
+  getMovementState,
 } from "../movement/movementModule.js";
 
 import { eventBus } from "../shared/eventBus.js";
@@ -96,7 +97,7 @@ function yieldToBrowser() {
   });
 }
 
-export default function Training({ onFinish }) {
+export default function Training({ onFinish, onActiveChange }) {
   const videoRef = useRef(null);
   const cameraRef = useRef(null);
   const trackerRef = useRef(null);
@@ -113,10 +114,12 @@ export default function Training({ onFinish }) {
   const inFrameRef = useRef(null);       // 上一帧是否有效，只在变化时更新页面
   const lostReasonRef = useRef(null);    // 最近一次丢失追踪的原因
   const tipTimerRef = useRef(null);
+  const waitingRef = useRef(false);      // 计数器是否在等人先站直（开始时、出框回来后）
 
   // null = 还没收到帧；{ inFrame: true } 或 { inFrame: false, reason }
   const [tracking, setTracking] = useState(null);
   const [formTip, setFormTip] = useState("");
+  const [waitingForStand, setWaitingForStand] = useState(false);
 
   const [inputMode, setInputMode] = useState("camera");
   const [selectedVideo, setSelectedVideo] = useState("");
@@ -171,6 +174,17 @@ export default function Training({ onFinish }) {
       EVENTS.POSE_FRAME,
       (frame) => {
         if (!activeRef.current) return;
+
+        // 计数器在本帧之后才更新，等这次事件分发完再读它的状态
+        queueMicrotask(() => {
+          if (!activeRef.current) return;
+          const waiting = Boolean(getMovementState()?.waitingForStand);
+          if (waiting !== waitingRef.current) {
+            waitingRef.current = waiting;
+            setWaitingForStand(waiting);
+          }
+        });
+
         if (frame.valid === inFrameRef.current) return;
 
         inFrameRef.current = frame.valid;
@@ -221,6 +235,13 @@ export default function Training({ onFinish }) {
       }
     };
   }, []);
+
+  // 训练中通知 App 锁住导航栏，免得误点离开、中断训练
+  useEffect(() => {
+    onActiveChange?.(status === "active" || status === "starting");
+  }, [status, onActiveChange]);
+
+  useEffect(() => () => onActiveChange?.(false), [onActiveChange]);
 
   function resetVideoElement() {
     const video = videoRef.current;
@@ -802,6 +823,12 @@ export default function Training({ onFinish }) {
                 : tracking
                 ? `● ${LOST_TEXT[tracking.reason] || "Please stay in the frame."}`
                 : "● Looking for you..."}
+            </p>
+          )}
+
+          {isActive && tracking?.inFrame && waitingForStand && (
+            <p className="stand-prompt" role="status">
+              🧍 Stand up straight to start counting.
             </p>
           )}
 
