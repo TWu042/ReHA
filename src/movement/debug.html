@@ -50,6 +50,16 @@
             <button id="start" class="primary">启动摄像头</button>
             <button id="newRound" disabled>新一轮（清零）</button>
             <button id="stop" disabled>停止</button>
+            <label>上传视频 <input id="videoFile" type="file" accept="video/*" /></label>
+          </div>
+          <div class="row">
+            <label>角度
+              <select id="angleMode">
+                <option value="auto">自动（有 3D 就用 3D，和训练页一样）</option>
+                <option value="2d">只用 2D</option>
+                <option value="3d">只用 3D</option>
+              </select>
+            </label>
           </div>
         </div>
 
