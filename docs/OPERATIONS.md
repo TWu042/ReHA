@@ -465,7 +465,7 @@ export const FEEDBACK = {
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 姿态              | videoEl、canvasEl、poseLandmarker、isTracking、lastVideoTime、MIN_VISIBILITY = 0.5                                                            |
 | 2 分析              | kneeAngleDeg、trunkLeanDeg、smoothedAngle、squatPhase、repCount、currentRep、minKneeAngle、romDeg、repDurationMs                              |
-| 2 计数阈值（movement/config.js） | STAND_ANGLE = 160、BOTTOM_ENTER_ANGLE = 133、BOTTOM_EXIT_ANGLE = 143、MIN_REP_DURATION_MS = 800、SMOOTHING_ALPHA = 0.3、TRACKING_GAP_MS = 1500 |
+| 2 计数阈值（movement/config.js） | STAND_ANGLE = 160、BOTTOM_ENTER_ANGLE = 133、BOTTOM_EXIT_ANGLE = 143、MIN_REP_DURATION_MS = 800、SMOOTHING_TIME_MS = 42、TRACKING_GAP_MS = 1500 |
 | 2 纠错阈值（movement/feedbackConfig.js） | DESCENT_START_ANGLE = 150、MAX_TRUNK_LEAN_DEG = 45、FEEDBACK_COOLDOWN_MS = 2000、SMOOTHING_ALPHA = 0.3 |
 | 3 数据              | sessions、baselineROM、averageROM、rangeScore、smoothnessScore、consistencyScore、qualityScore、STORAGE_KEY = 'rehab_sessions_v2'             |
 | 4 剧情              | episodeIndex、chestsOpened、characterState、narrationLines、animationQueue、replayFrames                                                      |
@@ -588,8 +588,12 @@ export const FEEDBACK = {
 | node tests/repCounter.test.js         | 计数器 × 7 份合成数据                        | 7/7          |
 | node tests/realRecordings.test.js     | 计数器 × 4 段 P1 真人录制                    | 4/4          |
 | node tests/movementModule.test.js     | 事件、session_completed 格式、samples、纠错  | 全部通过     |
+| node tests/pipeline.test.js           | 录制 → 计数 → adapter → P3 评分 → 存历史     | 全部通过     |
+| node tests/robustness.test.js         | 降帧率、时间抖动、掉帧、关键点抖动           | 全部通过     |
 | node tests/angles.test.js             | 角度计算（P4）                               | 全部通过     |
-| node --test src/pose/p1.test.js       | 摄像头、识别、录制（P1）                     | 10/10        |
+| node tests/feedback.test.js           | 纠错（P4）                                   | 全部通过     |
+| node tests/test-*.mjs（6 个）         | 评分、基线、历史存储（P3）                   | 全部通过     |
+| node --test src/pose/p1.test.js tests/pose3d.test.js | 摄像头、识别、录制、三维（P1） | 全部通过     |
 | npm run lint                          | 代码检查                                     | 通过         |
 | npm run build                         | 打包                                         | 通过         |
 

@@ -41,7 +41,7 @@ npm run dev     # 启动开发服务器，打开终端显示的地址（一般�
 | `src/pose/` | P1 | 摄像头、MediaPipe 识别、追踪质量、录制 | [README](src/pose/README.md) |
 | `src/movement/` | P2、P4 | 深蹲计数、ROM、纠错 | [README](src/movement/README.md) |
 | `src/app/` | P5 | 首页、训练页、结果页 | [README](src/app/README.md) |
-| `src/analytics/` | P3 | 评分、历史、趋势图 | ⏳ 还没开始 |
+| `src/analytics/` | P3 | 评分、基线、历史存储、P2→P3 适配 | 平稳度分和结果页接入进行中 |
 | `src/story/` | P4 | 剧情动画、宝箱、动作回放 | ⏳ 还没开始 |
 | `mock/` | — | 合成数据、真人录制、数据示例 | [README](mock/README.md) |
 | `tests/` | — | 不用摄像头的自动测试 | [README](tests/README.md) |

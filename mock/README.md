@@ -37,3 +37,13 @@ node mock/generateSquat.js   # 在仓库根目录运行，一次生成下面 7 �
 ## 数据示例
 
 `session_completed_example.json`：训练结束时 `session_completed` 的内容，用 `synthetic_squat.json` 跑出来的。格式和真实完全一样，但数字比真人理想（ROM 约 79°、30 帧/秒）。重新生成：`node tests/movementModule.test.js --write-example`。
+
+## 录制回放（`replay.js`）
+
+- 命令行：`node mock/replay.js mock/p1_normal_5_xxx.json` 把一段录制跑完整条流程（计数 → adapter → P3 评分），打印结果；加 `--write 文件名` 保存真实的 session_completed
+- 浏览器：`playRecording(frames, { speed })` 按录制里的时间间隔发出 `pose_frame`，不用开摄像头（文档 7.3 节的 mockPlayer），返回停止函数
+- `p1_` 开头的旧录制默认补 4:3 宽高比，合成数据不补；可以用 `--aspect` 指定
+
+## 模拟训练历史（`sessions.js`，P3）
+
+5 次模拟训练（2026-10-20 至 24，平均 ROM 62 → 79°），`isMock: true`，演示时当作基线和趋势图的历史。
