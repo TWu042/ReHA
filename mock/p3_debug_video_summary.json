@@ -12,7 +12,7 @@
     "trackingQuality": 1,
     "rangeScore": null,
     "consistencyScore": 95.553806497627,
-    "smoothnessScore": 37.645752304966805,
+    "smoothnessScore": 68.46302790805152,
     "qualityScore": null
   },
   "summary2": {
@@ -27,8 +27,8 @@
     "trackingQuality": 1,
     "rangeScore": 100,
     "consistencyScore": 95.553806497627,
-    "smoothnessScore": 37.645752304966805,
-    "qualityScore": 79.95986764077813
+    "smoothnessScore": 68.46302790805152,
+    "qualityScore": 89.20505032170354
   },
   "perRep": [
     {
@@ -38,8 +38,8 @@
       "minKneeAngle": 96,
       "maxKneeAngle": 178.4,
       "sampleCount": 12,
-      "jitterIndex": 1.718,
-      "smoothness": 42.4
+      "jitterIndex": 0.526,
+      "smoothness": 76.9
     },
     {
       "rep": 2,
@@ -48,8 +48,8 @@
       "minKneeAngle": 101.7,
       "maxKneeAngle": 179.4,
       "sampleCount": 11,
-      "jitterIndex": 2.096,
-      "smoothness": 35.1
+      "jitterIndex": 1.443,
+      "smoothness": 48.6
     },
     {
       "rep": 3,
@@ -58,8 +58,8 @@
       "minKneeAngle": 97.3,
       "maxKneeAngle": 179.2,
       "sampleCount": 12,
-      "jitterIndex": 2.25,
-      "smoothness": 32.5
+      "jitterIndex": 0.55,
+      "smoothness": 75.9
     },
     {
       "rep": 4,
@@ -68,8 +68,8 @@
       "minKneeAngle": 91.5,
       "maxKneeAngle": 179.5,
       "sampleCount": 13,
-      "jitterIndex": 1.799,
-      "smoothness": 40.7
+      "jitterIndex": 0.645,
+      "smoothness": 72.4
     }
   ],
   "reps": [
