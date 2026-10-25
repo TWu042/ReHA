@@ -1,28 +1,36 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-// Load JavaScript files as ES Modules
 const read = (path) => readFileSync(path, "utf8");
 
 const toURL = (source) => "data:text/javascript," + encodeURIComponent(source);
 
-// Load dependencies
+// Load dependencies.
 const statisticsURL = toURL(read("./src/analytics/statistics.js"));
 
 const scoringURL = toURL(read("./src/analytics/scoring.js"));
 
-// Load Session Summary with its dependencies
+const jitterURL = toURL(read("./src/analytics/jitter.js"));
+
+const smoothnessURL = toURL(
+  read("./src/analytics/smoothness.js").replace("./jitter.js", jitterURL)
+);
+
+// Load Session Summary with all dependencies resolved.
 const summarySource = read("./src/analytics/sessionSummary.js")
   .replace("./statistics.js", statisticsURL)
-  .replace("./scoring.js", scoringURL);
+  .replace("./scoring.js", scoringURL)
+  .replace("./smoothness.js", smoothnessURL);
 
 const { generateSessionSummary } = await import(toURL(summarySource));
 
-// Valid test session
+// Valid test session.
 const validSession = {
   sessionId: "test-1",
   date: "2026-10-24",
+  createdAt: null,
   isMock: true,
+  angleSource: null,
   completedReps: 3,
   reps: [
     { rom: 60, durationMs: 2400 },
@@ -33,10 +41,10 @@ const validSession = {
   trackingQuality: 0.95,
 };
 
-// TEST 1: Valid session should work
+// TEST 1: Valid session.
 assert.equal(generateSessionSummary(validSession).averageROM, 62);
 
-// TEST 2: Incorrect average ROM must be rejected
+// TEST 2: Incorrect averageROM rejected.
 assert.throws(
   () =>
     generateSessionSummary({
@@ -46,7 +54,7 @@ assert.throws(
   TypeError
 );
 
-// TEST 3: Zero repetitions cannot have averageROM = 0
+// TEST 3: Zero reps cannot have averageROM = 0.
 assert.throws(
   () =>
     generateSessionSummary({
@@ -58,7 +66,7 @@ assert.throws(
   TypeError
 );
 
-// TEST 4: trackingQuality above 1 must be rejected
+// TEST 4: trackingQuality above 1 rejected.
 assert.throws(
   () =>
     generateSessionSummary({
@@ -68,7 +76,7 @@ assert.throws(
   TypeError
 );
 
-// TEST 5: Zero repetitions with null averageROM is valid
+// TEST 5: Zero repetitions with null ROM.
 const emptyResult = generateSessionSummary({
   ...validSession,
   completedReps: 0,
@@ -78,8 +86,9 @@ const emptyResult = generateSessionSummary({
 
 assert.equal(emptyResult.averageROM, null);
 assert.equal(emptyResult.qualityScore, null);
+assert.equal(emptyResult.smoothnessScore, null);
 
-// TEST 6: P2 received no frames
+// TEST 6: No tracking frames.
 const noFramesSession = {
   ...validSession,
   completedReps: 0,
@@ -94,7 +103,7 @@ assert.equal(noFramesSummary.trackingQuality, null);
 assert.equal(noFramesSummary.averageROM, null);
 assert.equal(noFramesSummary.qualityScore, null);
 
-// TEST 7: Missing trackingQuality is not null
+// TEST 7: Missing trackingQuality rejected.
 assert.throws(
   () =>
     generateSessionSummary({
@@ -104,7 +113,7 @@ assert.throws(
   TypeError
 );
 
-// TEST 8: Rounded averageROM from P2 is accepted
+// TEST 8: Rounded averageROM accepted.
 const roundedSession = {
   ...validSession,
   reps: [
@@ -117,7 +126,7 @@ const roundedSession = {
 
 assert.equal(generateSessionSummary(roundedSession).averageROM, 78.7);
 
-// TEST 9: Invalid repetition duration is rejected
+// TEST 9: Invalid duration rejected.
 assert.throws(
   () =>
     generateSessionSummary({
@@ -131,7 +140,29 @@ assert.throws(
   TypeError
 );
 
+// TEST 10: Invalid createdAt rejected.
+assert.throws(
+  () =>
+    generateSessionSummary({
+      ...validSession,
+      createdAt: "not-a-date",
+    }),
+  TypeError
+);
+
+// TEST 11: Invalid angleSource rejected.
+assert.throws(
+  () =>
+    generateSessionSummary({
+      ...validSession,
+      angleSource: "4d",
+    }),
+  TypeError
+);
+
 console.log("PASS: Session Summary error handling");
 console.log("PASS: Null trackingQuality");
 console.log("PASS: Rounded averageROM");
+console.log("PASS: Invalid createdAt");
+console.log("PASS: Invalid angleSource");
 console.log("ALL SESSION ERROR TESTS PASSED");

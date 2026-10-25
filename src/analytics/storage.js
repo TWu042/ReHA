@@ -1,7 +1,8 @@
 /**
  * ReHA P3 - Session History Storage
  *
- * Stores compact training summaries only.
+ * Stores compact analytics summaries.
+ * Separates mock/real and 2D/3D/unknown sources.
  * Never stores raw samples or camera frames.
  */
 
@@ -10,7 +11,9 @@ export const STORAGE_KEY = "rehab_sessions_v2";
 const SAVED_FIELDS = [
   "sessionId",
   "date",
+  "createdAt",
   "isMock",
+  "angleSource",
   "completedReps",
   "averageROM",
   "baselineROM",
@@ -21,20 +24,49 @@ const SAVED_FIELDS = [
   "qualityScore",
 ];
 
-// Check whether a date is a real YYYY-MM-DD date.
+const SCORE_FIELDS = [
+  "rangeScore",
+  "consistencyScore",
+  "smoothnessScore",
+  "qualityScore",
+];
+
 function isValidDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return false;
   }
 
-  const date = new Date(`${value}T00:00:00Z`);
+  const parsed = new Date(`${value}T00:00:00Z`);
 
   return (
-    Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+    Number.isFinite(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === value
   );
 }
 
-// Validate a compact training record.
+function isValidCreatedAt(value) {
+  if (value === null || value === undefined) {
+    return true;
+  }
+
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+      value
+    )
+  ) {
+    return false;
+  }
+
+  return Number.isFinite(Date.parse(value));
+}
+
+function isValidAngleSource(value) {
+  return (
+    value === undefined || value === null || value === "2d" || value === "3d"
+  );
+}
+
 function isValidSession(session) {
   if (
     !session ||
@@ -43,6 +75,8 @@ function isValidSession(session) {
     typeof session.sessionId !== "string" ||
     !session.sessionId.trim() ||
     !isValidDate(session.date) ||
+    !isValidCreatedAt(session.createdAt) ||
+    !isValidAngleSource(session.angleSource) ||
     typeof session.isMock !== "boolean" ||
     !Number.isInteger(session.completedReps) ||
     session.completedReps < 0
@@ -50,7 +84,6 @@ function isValidSession(session) {
     return false;
   }
 
-  // No counted reps means averageROM must be null.
   if (session.completedReps === 0) {
     if (session.averageROM !== null) {
       return false;
@@ -59,7 +92,6 @@ function isValidSession(session) {
     return false;
   }
 
-  // Personal baseline can be unavailable.
   if (
     session.baselineROM !== null &&
     (!Number.isFinite(session.baselineROM) || session.baselineROM <= 0)
@@ -67,7 +99,6 @@ function isValidSession(session) {
     return false;
   }
 
-  // No frames received: trackingQuality can be null.
   if (
     session.trackingQuality !== null &&
     (!Number.isFinite(session.trackingQuality) ||
@@ -77,15 +108,7 @@ function isValidSession(session) {
     return false;
   }
 
-  // Scores must be null or numbers between 0 and 100.
-  const scoreFields = [
-    "rangeScore",
-    "consistencyScore",
-    "smoothnessScore",
-    "qualityScore",
-  ];
-
-  for (const field of scoreFields) {
+  for (const field of SCORE_FIELDS) {
     const score = session[field];
 
     if (
@@ -99,7 +122,6 @@ function isValidSession(session) {
   return true;
 }
 
-// Keep only approved fields.
 function compactSession(session) {
   if (!session || typeof session !== "object" || Array.isArray(session)) {
     throw new TypeError("Invalid session for storage");
@@ -118,7 +140,6 @@ function compactSession(session) {
   return compact;
 }
 
-// Read and validate stored history.
 export function getSessions(storage = globalThis.localStorage) {
   const raw = storage.getItem(STORAGE_KEY);
 
@@ -135,7 +156,6 @@ export function getSessions(storage = globalThis.localStorage) {
     throw new TypeError("Invalid stored session history");
   }
 
-  // Detect duplicate saved records.
   const ids = new Set();
 
   for (const session of sessions) {
@@ -151,7 +171,6 @@ export function getSessions(storage = globalThis.localStorage) {
   return sessions;
 }
 
-// Save one compact training record.
 export function saveSession(session, storage = globalThis.localStorage) {
   const compact = compactSession(session);
   const sessions = getSessions(storage);
@@ -166,14 +185,11 @@ export function saveSession(session, storage = globalThis.localStorage) {
     throw new Error("Session already saved");
   }
 
-  const updated = [...sessions, compact];
-
-  storage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  storage.setItem(STORAGE_KEY, JSON.stringify([...sessions, compact]));
 
   return compact;
 }
 
-// Clear v2 history only.
 export function clearSessions(storage = globalThis.localStorage) {
   storage.removeItem(STORAGE_KEY);
 }
