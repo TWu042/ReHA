@@ -27,9 +27,9 @@ export const DEFAULT_ASPECT = 4 / 3;
  * @param {number} [options.aspectRatio]  帧里没有 aspectRatio 时用这个
  * @param {object} [options.config]       覆盖 config.js 的阈值
  */
-export function analyzeFrames(frames, { aspectRatio = DEFAULT_ASPECT, config = {} } = {}) {
+export function analyzeFrames(frames, { aspectRatio = DEFAULT_ASPECT, config = {}, angleMode = 'auto' } = {}) {
   const withAspect = frames.map(f => (f.aspectRatio == null ? { ...f, aspectRatio } : f));
-  const counter = createRepCounter({ config });
+  const counter = createRepCounter({ config, angleMode });
   const aborted = [];
   for (const f of withAspect) {
     const r = counter.processFrame(f);
@@ -37,7 +37,7 @@ export function analyzeFrames(frames, { aspectRatio = DEFAULT_ASPECT, config = {
   }
   const state = counter.getState();
   const validFrames = withAspect.filter(f => f.valid);
-  const angles = validFrames.map(f => getPoseAngles(f, { mode: state.angleSource ?? 'auto', aspectRatio }).kneeAngleDeg).filter(a => a != null);
+  const angles = validFrames.map(f => getPoseAngles(f, { mode: state.angleSource ?? angleMode, aspectRatio }).kneeAngleDeg).filter(a => a != null);
   const seconds = frames.length > 1 ? (frames.at(-1).timestampMs - frames[0].timestampMs) / 1000 : 0;
   return {
     frames: frames.length,
