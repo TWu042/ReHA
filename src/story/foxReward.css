@@ -1,0 +1,17 @@
+.fox-reward-panel { padding: 24px; }
+.fox-reward-panel .section-label { color: #5972bf; }
+.fox-reward-panel h3 { margin: 10px 0 18px; }
+.fox-reward-window {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #eaf0df;
+}
+.fox-reward-window canvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; }
+.fox-reward-placeholder { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 24px; text-align: center; }
+.fox-reward-caption { text-align: center; margin: 14px 0 6px; }
+.fox-reward-note { color: #687b98; font-size: 12px; line-height: 1.5; margin: 0; text-align: center; }
