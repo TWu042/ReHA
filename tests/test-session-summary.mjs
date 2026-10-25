@@ -1,49 +1,64 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-const load = async (path) => {
-  const source = readFileSync(path, "utf8");
-  const url = "data:text/javascript," + encodeURIComponent(source);
-  return import(url);
-};
+// Load source files as standalone ES modules.
+const read = (path) => readFileSync(path, "utf8");
 
-// Load Mock Data
-const { mockSessions } = await load("./mock/sessions.js");
+const toURL = (source) => "data:text/javascript," + encodeURIComponent(source);
 
-// Load dependencies
-const statisticsSource = readFileSync("./src/analytics/statistics.js", "utf8");
-const scoringSource = readFileSync("./src/analytics/scoring.js", "utf8");
-let summarySource = readFileSync("./src/analytics/sessionSummary.js", "utf8");
+// Load mock sessions.
+const mockURL = toURL(read("./mock/sessions.js"));
+const { mockSessions } = await import(mockURL);
 
-// Replace relative imports with data URLs for standalone testing
-const statisticsURL =
-  "data:text/javascript," + encodeURIComponent(statisticsSource);
-const scoringURL = "data:text/javascript," + encodeURIComponent(scoringSource);
+// Load dependency modules.
+const statisticsURL = toURL(read("./src/analytics/statistics.js"));
 
-summarySource = summarySource
+const scoringURL = toURL(read("./src/analytics/scoring.js"));
+
+const jitterURL = toURL(read("./src/analytics/jitter.js"));
+
+const smoothnessURL = toURL(
+  read("./src/analytics/smoothness.js").replace("./jitter.js", jitterURL)
+);
+
+// Replace every relative import in Session Summary.
+const summarySource = read("./src/analytics/sessionSummary.js")
   .replace("./statistics.js", statisticsURL)
-  .replace("./scoring.js", scoringURL);
+  .replace("./scoring.js", scoringURL)
+  .replace("./smoothness.js", smoothnessURL);
 
-const summaryURL = "data:text/javascript," + encodeURIComponent(summarySource);
+const summaryURL = toURL(summarySource);
 
 const { generateSessionSummary } = await import(summaryURL);
 
-// Test fifth session
+// Test fifth mock session against earlier history.
 const current = mockSessions[4];
 const history = mockSessions.slice(0, 4);
 
 const summary = generateSessionSummary(current, history);
 
+// Preserve original regression expectations.
 assert.equal(summary.sessionId, "mock-5");
 assert.equal(summary.completedReps, 3);
 assert.equal(summary.averageROM, 79);
 assert.equal(summary.baselineROM, 66);
 assert.equal(summary.rangeScore, 100);
-assert.equal(summary.smoothnessScore, null);
-assert.equal(summary.qualityScore, null);
 assert.equal(summary.isMock, true);
 
-assert.ok(summary.consistencyScore >= 0 && summary.consistencyScore <= 100);
+// Legacy mock sessions have no known angle source.
+assert.equal(summary.angleSource, null);
+
+// No samples means no invented smoothness score.
+assert.equal(summary.smoothnessScore, null);
+assert.equal(summary.qualityScore, null);
+
+// Consistency should still be calculated.
+assert.ok(
+  Number.isFinite(summary.consistencyScore) &&
+    summary.consistencyScore >= 0 &&
+    summary.consistencyScore <= 100
+);
 
 console.log("PASS: Session Summary");
 console.log(summary);
+console.log("ALL SESSION SUMMARY TESTS PASSED");

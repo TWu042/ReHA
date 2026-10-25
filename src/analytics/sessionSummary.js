@@ -6,17 +6,90 @@ import {
   calculateQualityScore,
 } from "./scoring.js";
 
+import { calculateSessionSmoothness } from "./smoothness.js";
+
 /**
- * Generate an analytics summary for one completed session.
+ * ReHA P3 - Session Analytics Summary
  *
- * currentSession: current training data
- * previousSessions: historical sessions before this training
- *
- * This is an experimental analytics report,
- * not a clinically validated rehabilitation assessment.
+ * Supports:
+ * - Mock / Real isolation
+ * - 2D / 3D / Unknown angle-source isolation
+ * - Same-day chronological history
+ * - ROM validation
+ * - Experimental Smoothness and Quality scores
  */
+
+function isValidDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const parsed = new Date(`${value}T00:00:00Z`);
+
+  return (
+    Number.isFinite(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === value
+  );
+}
+
+function parseCreatedAt(value) {
+  if (
+    typeof value !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+      value
+    )
+  ) {
+    return null;
+  }
+
+  const timestamp = Date.parse(value);
+
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function normalizeAngleSource(value) {
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (value === "2d" || value === "3d") {
+    return value;
+  }
+
+  return undefined;
+}
+
+/**
+ * Confirm a historical session occurred before
+ * the current session and uses the same angle source.
+ */
+function isPreviousSession(history, current) {
+  if (
+    !history ||
+    typeof history !== "object" ||
+    Array.isArray(history) ||
+    history.sessionId === current.sessionId ||
+    history.isMock !== current.isMock ||
+    normalizeAngleSource(history.angleSource) !==
+      normalizeAngleSource(current.angleSource) ||
+    !isValidDate(history.date)
+  ) {
+    return false;
+  }
+
+  const currentTime = parseCreatedAt(current.createdAt);
+  const historyTime = parseCreatedAt(history.createdAt);
+
+  if (currentTime !== null && historyTime !== null) {
+    return historyTime < currentTime;
+  }
+
+  // Legacy date-only records:
+  // include only strictly earlier calendar dates.
+  return history.date < current.date;
+}
+
 export function generateSessionSummary(currentSession, previousSessions = []) {
-  // STEP 1: Validate input objects
   if (
     !currentSession ||
     typeof currentSession !== "object" ||
@@ -29,20 +102,26 @@ export function generateSessionSummary(currentSession, previousSessions = []) {
   const {
     sessionId,
     date,
+    createdAt,
     isMock,
+    angleSource,
     completedReps,
     averageROM,
     reps,
     trackingQuality,
   } = currentSession;
 
-  // STEP 2: Validate session fields
+  const normalizedSource = normalizeAngleSource(angleSource);
+
   if (
     typeof sessionId !== "string" ||
     !sessionId.trim() ||
-    typeof date !== "string" ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+    !isValidDate(date) ||
+    (createdAt !== undefined &&
+      createdAt !== null &&
+      parseCreatedAt(createdAt) === null) ||
     typeof isMock !== "boolean" ||
+    normalizedSource === undefined ||
     !Number.isInteger(completedReps) ||
     completedReps < 0 ||
     !Array.isArray(reps) ||
@@ -55,12 +134,13 @@ export function generateSessionSummary(currentSession, previousSessions = []) {
     throw new TypeError("Invalid current session structure");
   }
 
-  // STEP 3: Validate each counted repetition
+  // Validate counted repetitions.
   if (
     reps.some(
       (rep) =>
         !rep ||
         typeof rep !== "object" ||
+        Array.isArray(rep) ||
         !Number.isFinite(rep.rom) ||
         rep.rom <= 0 ||
         !Number.isFinite(rep.durationMs) ||
@@ -70,18 +150,15 @@ export function generateSessionSummary(currentSession, previousSessions = []) {
     throw new TypeError("Invalid repetition data");
   }
 
-  // STEP 4: Verify averageROM
+  // Validate P2 averageROM without overriding it.
   if (completedReps === 0) {
     if (averageROM !== null) {
-      throw new TypeError(
-        "averageROM must be null when no repetitions are counted"
-      );
+      throw new TypeError("averageROM must be null when no reps are counted");
     }
   } else {
     const calculatedAverageROM =
       reps.reduce((sum, rep) => sum + rep.rom, 0) / completedReps;
 
-    // Allow normal rounding to one decimal place
     const ROM_TOLERANCE = 0.05 + 1e-9;
 
     if (
@@ -93,40 +170,36 @@ export function generateSessionSummary(currentSession, previousSessions = []) {
     }
   }
 
-  // STEP 5: Use only previous sessions of the same type
-  const validPreviousSessions = previousSessions.filter(
-    (session) =>
-      session &&
-      session.sessionId !== sessionId &&
-      typeof session.date === "string" &&
-      session.date < date &&
-      session.isMock === isMock
+  // Filter previous sessions.
+  const validPreviousSessions = previousSessions.filter((session) =>
+    isPreviousSession(session, currentSession)
   );
 
-  // STEP 6: Calculate personal baseline
-  const baselineROM = calculateBaselineROM(validPreviousSessions, isMock);
+  // Use only matching angle-source history.
+  const baselineROM = calculateBaselineROM(
+    validPreviousSessions,
+    isMock,
+    normalizedSource
+  );
 
-  // STEP 7: Calculate movement scores
   const rangeScore = calculateRangeScore(averageROM, baselineROM);
 
   const consistencyScore = calculateConsistencyScore(reps);
 
-  // P2 provides samples, but smoothness calculation
-  // has not been implemented in P3 yet.
-  const smoothnessScore = null;
+  const smoothnessScore = calculateSessionSmoothness(reps);
 
-  // Missing smoothness means no overall score yet
   const qualityScore = calculateQualityScore({
     rangeScore,
     smoothnessScore,
     consistencyScore,
   });
 
-  // STEP 8: Return summary for Dashboard and storage
   return {
     sessionId,
     date,
+    createdAt: createdAt ?? null,
     isMock,
+    angleSource: normalizedSource,
     completedReps,
     averageROM,
     baselineROM,
