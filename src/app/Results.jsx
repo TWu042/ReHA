@@ -32,6 +32,12 @@ export default function Results({ result, analysis, onHome }) {
     const consistencyNote =
       summary && summary.completedReps === 0 ? "Needs at least 1 rep" : "How even your reps were";
 
+    const smoothnessNote = !summary || summary.completedReps === 0
+      ? "Needs at least 1 rep"
+      : summary.smoothnessScore != null
+        ? "How steady your movement was"
+        : "Not enough motion samples";
+
     const qualityNote = summary?.qualityScore != null
       ? "Range 40% · Smoothness 30% · Consistency 30%"
       : summary?.rangeScore == null
@@ -87,6 +93,13 @@ export default function Results({ result, analysis, onHome }) {
                 <h2>{formatScore(summary.rangeScore)}</h2>
                 <p>Range Score</p>
                 <small className="score-note">{rangeNote}</small>
+              </div>
+
+              <div className="glass-panel result-card">
+                <span className="result-icon">🌊</span>
+                <h2>{formatScore(summary.smoothnessScore)}</h2>
+                <p>Smoothness</p>
+                <small className="score-note">{smoothnessNote}</small>
               </div>
 
               <div className="glass-panel result-card">

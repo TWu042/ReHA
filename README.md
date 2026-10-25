@@ -41,8 +41,8 @@ npm run dev     # 启动开发服务器，打开终端显示的地址（一般�
 | `src/pose/` | P1 | 摄像头、MediaPipe 识别、追踪质量、录制 | [README](src/pose/README.md) |
 | `src/movement/` | P2、P4 | 深蹲计数、ROM、纠错 | [README](src/movement/README.md) |
 | `src/app/` | P5 | 首页、训练页、结果页 | [README](src/app/README.md) |
-| `src/analytics/` | P3 | 评分、基线、历史存储、P2→P3 适配 | 平稳度分和结果页接入进行中 |
-| `src/story/` | P4 | 剧情动画、宝箱、动作回放 | ⏳ 还没开始 |
+| `src/analytics/` | P3 | 评分（幅度、平稳度、一致性、总分）、基线、历史存储、P2→P3 适配、训练结束评分入口 | 已接入结果页 |
+| `src/story/` | P1 | 训练页狐狸奖励动画 | [README](src/story/README.md) |
 | `mock/` | — | 合成数据、真人录制、数据示例 | [README](mock/README.md) |
 | `tests/` | — | 不用摄像头的自动测试 | [README](tests/README.md) |
 | `docs/` | — | 操作手册 | [OPERATIONS.md](docs/OPERATIONS.md) |
@@ -51,7 +51,7 @@ npm run dev     # 启动开发服务器，打开终端显示的地址（一般�
 
 先 `npm run dev`，再打开（只在开发时用，打包上线时不包含）：
 
-- `/src/movement/debug.html`：计数实时测试（骨架、膝角曲线、阈值线、准确率、录制）
+- `/src/movement/debug.html`：计数测试，摄像头或上传视频（骨架、膝角曲线、阈值线、准确率、2D/3D 切换、录制）
 - `/src/pose/debug.html`：摄像头和关键点调试、按场景录制
 
 ## 协作规则
