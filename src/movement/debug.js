@@ -36,6 +36,10 @@ let history = [];          // [{ t, a }]，a 为 null 表示这一帧无效
 let offHistory = null;
 let rafId = null;
 let lastCount = 0;        // 上一轮的次数，停止后还能看准确率
+let analyzing = false;    // 正在分析上传的视频
+let roundMin = Infinity;  // 本轮平滑膝角的最小、最大值（判断站直 / 蹲到底阈值是否合适）
+let roundMax = -Infinity;
+const OFFLINE_FPS = 10;   // 和训练页的离线分析一样
 
 const tracker = createPoseTracker(videoEl, {
   onError(error) {
@@ -76,13 +80,19 @@ function restartRecording() {
 }
 
 function beginRound() {
-  startMovement();
+  startMovement({ angleMode: $('angleMode').value });
   restartRecording();
   history = [];
+  roundMin = Infinity;
+  roundMax = -Infinity;
   offHistory?.();
   // 在 startMovement 之后订阅，保证读到的是这一帧处理完的状态
   offHistory = eventBus.on(EVENTS.POSE_FRAME, frame => {
     const s = getMovementState();
+    if (frame.valid && s?.smoothedAngle != null) {
+      roundMin = Math.min(roundMin, s.smoothedAngle);
+      roundMax = Math.max(roundMax, s.smoothedAngle);
+    }
     history.push({ t: frame.timestampMs, a: frame.valid ? s?.smoothedAngle ?? null : null });
     const cutoff = frame.timestampMs - 10000;
     while (history.length && history[0].t < cutoff) history.shift();
@@ -93,7 +103,12 @@ function endRound() {
   if (recorder.isRecording) recorder.stop();   // 保留这一轮的数据，停止后仍可下载
   offHistory?.();
   offHistory = null;
+  const source = getMovementState()?.angleSource ?? '--';
   const result = stopMovement();
+  if (Number.isFinite(roundMin)) {
+    log(`📐 本轮膝角（平滑）最小 ${roundMin.toFixed(1)}°、最大 ${roundMax.toFixed(1)}°，角度来源 ${source}` +
+      (roundMax < STAND_ANGLE ? `。最大值没到站直阈值 ${STAND_ANGLE}°，所以一直在等站直` : ''));
+  }
   if (result) {
     lastCount = result.repCount;
     const roms = result.reps.map(r => r.rom).join('°、');
@@ -105,6 +120,7 @@ function endRound() {
 
 function stopAll() {
   request++;
+  analyzing = false;
   if (running) endRound();
   running = false;
   tracker.stop();
@@ -116,7 +132,8 @@ function stopAll() {
 
 function setButtons() {
   $('start').disabled = running;
-  $('newRound').disabled = !running;
+  $('newRound').disabled = !running || analyzing;
+  $('videoFile').disabled = analyzing;
   $('stop').disabled = !running;
   $('saveRecord').disabled = recorder.frameCount === 0;
 }
@@ -126,6 +143,7 @@ $('start').onclick = async () => {
   $('start').disabled = true;
   statusEl.textContent = '正在启动摄像头和加载模型……';
   try {
+    videoEl.removeAttribute('src');
     await camera.start();
     if (token !== request) return;
     await tracker.start();
@@ -148,6 +166,94 @@ $('newRound').onclick = () => {
   endRound();
   beginRound();
   log('▶ 开始新一轮');
+};
+
+// 换角度模式：正在用摄像头就马上开新一轮
+$('angleMode').onchange = () => {
+  if (running && !analyzing) {
+    endRound();
+    beginRound();
+    log(`▶ 角度模式改为 ${$('angleMode').value}，开始新一轮`);
+  }
+};
+
+// ---------- 上传视频（和训练页一样每秒 10 帧逐帧分析） ----------
+function waitForVideoData(video) {
+  if (video.readyState >= 2) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    video.addEventListener('loadeddata', () => resolve(), { once: true });
+    video.addEventListener('error', () => reject(new Error(
+      video.error?.code === 3 || video.error?.code === 4
+        ? '浏览器播放不了这个视频，可能是 HEVC（H.265，iPhone 默认格式），请转成 H.264 MP4'
+        : '视频加载失败')), { once: true });
+  });
+}
+
+function seekTo(video, time) {
+  return new Promise(resolve => {
+    const done = () => { video.removeEventListener('seeked', done); resolve(); };
+    video.addEventListener('seeked', done);
+    video.currentTime = time;
+    if (!video.seeking) done();   // 已经在这个位置时不会触发 seeked
+  });
+}
+
+$('videoFile').onchange = async event => {
+  const file = event.target.files?.[0];
+  event.target.value = '';
+  if (!file) return;
+  if (!file.size) {
+    statusEl.textContent = '这个文件是空的（0 字节），请重新下载或拷贝。';
+    return;
+  }
+  stopAll();
+  const token = ++request;
+  const url = URL.createObjectURL(file);
+  try {
+    statusEl.textContent = '正在加载视频和模型……';
+    videoEl.srcObject = null;
+    videoEl.src = url;
+    videoEl.load();
+    await waitForVideoData(videoEl);
+    if (token !== request) return;
+    videoEl.pause();
+    await tracker.start({ manual: true });
+    if (token !== request) return;
+
+    running = true;
+    analyzing = true;
+    beginRound();
+    setButtons();
+    rafId = requestAnimationFrame(draw);
+    log(`▶ 分析视频 ${file.name}（${videoEl.duration.toFixed(1)} 秒，角度模式 ${$('angleMode').value}）`);
+
+    const base = performance.now();
+    const total = Math.max(1, Math.ceil(videoEl.duration * OFFLINE_FPS));
+    for (let i = 0; i < total; i++) {
+      if (token !== request) return;
+      await seekTo(videoEl, Math.min(i / OFFLINE_FPS, Math.max(0, videoEl.duration - 0.001)));
+      if (token !== request) return;
+      tracker.analyzeFrame(base + (i * 1000) / OFFLINE_FPS);
+      statusEl.textContent = `正在分析视频…… ${Math.round(((i + 1) / total) * 100)}%`;
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    endRound();
+    running = false;
+    analyzing = false;
+    tracker.stop();
+    cancelAnimationFrame(rafId);
+    drawStats();
+    statusEl.textContent = '视频分析完成。填好实际次数后可以下载录制；换角度模式后重新上传可以对比。';
+  } catch (error) {
+    if (token !== request) return;
+    analyzing = false;
+    stopAll();
+    statusEl.textContent = error.message;
+  } finally {
+    if (token === request) analyzing = false;
+    setButtons();
+  }
 };
 
 $('stop').onclick = () => {
