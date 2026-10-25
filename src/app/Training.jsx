@@ -50,7 +50,13 @@ function waitForVideoData(video) {
 
     const failed = () => {
       cleanup();
-      reject(new Error("Cannot load this video format."));
+      // MEDIA_ERR_SRC_NOT_SUPPORTED (4) / DECODE (3): usually an HEVC (H.265) phone video
+      const code = video.error?.code;
+      reject(new Error(
+        code === 3 || code === 4
+          ? "This browser can't play this video. It may be HEVC (H.265, iPhone default). Please convert it to H.264 MP4."
+          : "Cannot load this video format."
+      ));
     };
 
     video.addEventListener("loadeddata", loaded);
@@ -308,6 +314,12 @@ export default function Training({ onFinish, onActiveChange }) {
 
     if (!file.type.startsWith("video/")) {
       setError("Please select a video file.");
+      return;
+    }
+
+    // e.g. a WeChat video that was never fully downloaded
+    if (file.size === 0) {
+      setError("This video file is empty (0 bytes). Please download or copy it again.");
       return;
     }
 
