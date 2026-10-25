@@ -264,3 +264,35 @@ test('权限尚未返回时停止，会释放晚到的视频流', async t => {
   assert.equal(track.stop.mock.callCount(), 1)
   assert.equal(video.srcObject, null)
 })
+
+test('maxFps 限制实时推理次数；默认不限', async t => {
+  const h = harness(t)
+  const limited = createPoseTracker(h.video, { bus: h.bus, createModel: h.createModel, maxFps: 15 })
+  t.after(() => limited.stop())
+  await limited.start()
+  for (let i = 0; i < 10; i++) h.step(33)   // 约 30 帧/秒的视频，持续约 330ms
+  const calls = h.model.detectForVideo.mock.callCount()
+  assert.ok(calls >= 3 && calls <= 6, `15 帧/秒上限下 330ms 内应推理 3–6 次，实际 ${calls}`)
+  limited.stop()
+
+  h.model.detectForVideo.mock.resetCalls()
+  await h.tracker.start()
+  for (let i = 0; i < 10; i++) h.step(33)
+  assert.equal(h.model.detectForVideo.mock.callCount(), 10)
+})
+
+test('手动模式（离线分析视频）：不自动循环，analyzeFrame 逐帧分析且时间戳递增', async t => {
+  const h = harness(t)
+  await h.tracker.start({ manual: true })
+  assert.equal(h.callbacks.size, 0)
+  const frames = () => h.bus.events.filter(e => e.type === EVENTS.POSE_FRAME).map(e => e.payload)
+  assert.equal(h.tracker.analyzeFrame(1000), true)
+  assert.equal(h.tracker.analyzeFrame(1100), true)
+  assert.equal(h.tracker.analyzeFrame(1100), true)   // 给了重复时间戳，仍要严格递增
+  const ts = frames().map(f => f.timestampMs)
+  assert.equal(ts.length, 3)
+  assert.ok(ts[1] > ts[0] && ts[2] > ts[1])
+  assert.ok(frames().every(f => Array.isArray(f.worldLandmarks)))
+  h.tracker.stop()
+  assert.equal(h.tracker.analyzeFrame(1200), false)
+})

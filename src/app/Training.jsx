@@ -1,12 +1,13 @@
-
 import { useEffect, useRef, useState } from "react";
 
 import { createCamera } from "../pose/camera.js";
-import { createPoseTracker } from "../pose/poseTracker.js";
+import { createPoseTracker, MAX_LIVE_FPS } from "../pose/poseTracker.js";
+
 import {
   startMovement,
   stopMovement,
 } from "../movement/movementModule.js";
+
 import { eventBus } from "../shared/eventBus.js";
 import { EVENTS, FEEDBACK } from "../shared/contracts.js";
 
@@ -27,14 +28,88 @@ const TIP_TEXT = {
 };
 const TIP_DURATION_MS = 3000;
 
+const OFFLINE_FPS = 10;
+const OFFLINE_FRAME_INTERVAL = 1 / OFFLINE_FPS;
+
+function waitForVideoData(video) {
+  if (video.readyState >= 2) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      video.removeEventListener("loadeddata", loaded);
+      video.removeEventListener("error", failed);
+    };
+
+    const loaded = () => {
+      cleanup();
+      resolve();
+    };
+
+    const failed = () => {
+      cleanup();
+      reject(new Error("Cannot load this video format."));
+    };
+
+    video.addEventListener("loadeddata", loaded);
+    video.addEventListener("error", failed);
+
+    if (video.readyState >= 2) {
+      loaded();
+    }
+  });
+}
+
+function seekTo(video, time) {
+  return new Promise((resolve, reject) => {
+    const cleanup = () => {
+      video.removeEventListener("seeked", completed);
+      video.removeEventListener("error", failed);
+    };
+
+    const completed = () => {
+      cleanup();
+      resolve();
+    };
+
+    const failed = () => {
+      cleanup();
+      reject(new Error("Unable to seek video frame."));
+    };
+
+    video.addEventListener("seeked", completed);
+    video.addEventListener("error", failed);
+
+    video.currentTime = time;
+
+    if (!video.seeking) {
+      cleanup();
+      resolve();
+    }
+  });
+}
+
+function yieldToBrowser() {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
 export default function Training({ onFinish }) {
   const videoRef = useRef(null);
   const cameraRef = useRef(null);
   const trackerRef = useRef(null);
+
+  // Hidden file input for the Upload Video button.
+  const fileInputRef = useRef(null);
+
   const activeRef = useRef(false);
   const startingRef = useRef(false);
   const mountedRef = useRef(true);
   const videoUrlRef = useRef(null);
+
+  const analysisTokenRef = useRef(0);
   const inFrameRef = useRef(null);       // 上一帧是否有效，只在变化时更新页面
   const lostReasonRef = useRef(null);    // 最近一次丢失追踪的原因
   const tipTimerRef = useRef(null);
@@ -42,14 +117,20 @@ export default function Training({ onFinish }) {
   // null = 还没收到帧；{ inFrame: true } 或 { inFrame: false, reason }
   const [tracking, setTracking] = useState(null);
   const [formTip, setFormTip] = useState("");
+
   const [inputMode, setInputMode] = useState("camera");
   const [selectedVideo, setSelectedVideo] = useState("");
+
   const [reps, setReps] = useState(0);
   const [status, setStatus] = useState("idle");
+
   const [feedback, setFeedback] = useState(
     "Press Start Training to begin!"
   );
+
   const [error, setError] = useState("");
+  const [analysisProgress, setAnalysisProgress] =
+    useState(0);
 
   const target = 10;
 
@@ -61,7 +142,10 @@ export default function Training({ onFinish }) {
       (data) => {
         if (!activeRef.current) return;
 
+        console.log("REP_COMPLETED:", data);
+
         setReps(data.repCount);
+
         setFeedback(
           `Great job! Squat ${data.repCount} completed.`
         );
@@ -74,6 +158,8 @@ export default function Training({ onFinish }) {
       (data) => {
         lostReasonRef.current = data.reason;
         if (!activeRef.current) return;
+
+        console.log("TRACKING_LOST:", data);
 
         inFrameRef.current = false;
         setTracking({ inFrame: false, reason: data.reason });
@@ -113,6 +199,7 @@ export default function Training({ onFinish }) {
 
     return () => {
       mountedRef.current = false;
+      analysisTokenRef.current++;
 
       unsubscribeRep();
       unsubscribeLost();
@@ -125,6 +212,7 @@ export default function Training({ onFinish }) {
 
       trackerRef.current?.stop();
       cameraRef.current?.stop();
+
       stopMovement();
 
       if (videoUrlRef.current) {
@@ -133,6 +221,17 @@ export default function Training({ onFinish }) {
       }
     };
   }, []);
+
+  function resetVideoElement() {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.pause();
+    video.removeAttribute("src");
+    video.srcObject = null;
+    video.load();
+  }
 
   function handleModeChange(mode) {
     if (
@@ -143,24 +242,36 @@ export default function Training({ onFinish }) {
       return;
     }
 
-    const video = videoRef.current;
+    analysisTokenRef.current++;
 
-    if (video) {
-      video.pause();
-      video.removeAttribute("src");
-      video.srcObject = null;
-      video.load();
-    }
+    resetVideoElement();
 
     setInputMode(mode);
     setError("");
     setReps(0);
+    setAnalysisProgress(0);
 
     setFeedback(
       mode === "upload"
         ? "Choose a recorded squat video."
         : "Press Start Training to begin!"
     );
+  }
+
+  function handleUploadClick() {
+    if (activeRef.current || startingRef.current) {
+      return;
+    }
+
+    if (inputMode !== "upload") {
+      handleModeChange("upload");
+    }
+
+    // Allow selecting the same file again.
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+      fileInputRef.current.click();
+    }
   }
 
   function handleVideoUpload(event) {
@@ -188,6 +299,7 @@ export default function Training({ onFinish }) {
     }
 
     const url = URL.createObjectURL(file);
+
     videoUrlRef.current = url;
 
     if (video) {
@@ -197,15 +309,27 @@ export default function Training({ onFinish }) {
     }
 
     setSelectedVideo(file.name);
+    setInputMode("upload");
     setReps(0);
+    setAnalysisProgress(0);
     setError("");
 
     setFeedback(
       "Video selected. Click Analyze Video to begin."
     );
+
+    console.log("VIDEO UPLOADED:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
   }
 
   function handleTrackerError(err) {
+    console.error("Pose tracking error:", err);
+
+    analysisTokenRef.current++;
+
     trackerRef.current?.stop();
     cameraRef.current?.stop();
     videoRef.current?.pause();
@@ -215,14 +339,132 @@ export default function Training({ onFinish }) {
     }
 
     activeRef.current = false;
+    startingRef.current = false;
 
     if (mountedRef.current) {
       setStatus("idle");
+
       setError(
         err.message || "Pose tracking stopped."
       );
+
       setFeedback("Tracking stopped.");
     }
+  }
+
+  function finishTraining() {
+    if (!activeRef.current) return;
+
+    activeRef.current = false;
+    analysisTokenRef.current++;
+
+    trackerRef.current?.stop();
+    cameraRef.current?.stop();
+
+    videoRef.current?.pause();
+
+    const result = stopMovement();
+
+    console.log("MOVEMENT RESULT:", result);
+
+    setTracking(null);
+    setFormTip("");
+    clearTimeout(tipTimerRef.current);
+
+    if (mountedRef.current) {
+      setStatus("idle");
+      setFeedback("Training complete!");
+
+      onFinish(result);
+    }
+  }
+
+  async function analyzeUploadedVideo(video, tracker, token) {
+    const duration = video.duration;
+
+    if (!Number.isFinite(duration) || duration <= 0) {
+      throw new Error("Invalid video duration.");
+    }
+
+    video.pause();
+
+    const frameCount = Math.max(
+      1,
+      Math.ceil(duration * OFFLINE_FPS)
+    );
+
+    const baseTimestamp = performance.now();
+
+    console.log("OFFLINE ANALYSIS START:", {
+      duration,
+      fps: OFFLINE_FPS,
+      frameCount,
+      width: video.videoWidth,
+      height: video.videoHeight,
+    });
+
+    for (let i = 0; i < frameCount; i++) {
+      if (
+        token !== analysisTokenRef.current ||
+        !mountedRef.current ||
+        !activeRef.current
+      ) {
+        return;
+      }
+
+      const videoTime = Math.min(
+        i * OFFLINE_FRAME_INTERVAL,
+        Math.max(0, duration - 0.001)
+      );
+
+      await seekTo(video, videoTime);
+
+      if (
+        token !== analysisTokenRef.current ||
+        !mountedRef.current ||
+        !activeRef.current
+      ) {
+        return;
+      }
+
+      const timestampMs =
+        baseTimestamp + videoTime * 1000;
+
+      const success = tracker.analyzeFrame(
+        timestampMs
+      );
+
+      if (!success) {
+        throw new Error(
+          `Pose analysis failed at ${videoTime.toFixed(2)}s.`
+        );
+      }
+
+      const percent = Math.round(
+        ((i + 1) / frameCount) * 100
+      );
+
+      setAnalysisProgress(percent);
+
+      await yieldToBrowser();
+    }
+
+    if (
+      token !== analysisTokenRef.current ||
+      !mountedRef.current ||
+      !activeRef.current
+    ) {
+      return;
+    }
+
+    console.log("OFFLINE ANALYSIS COMPLETE:", {
+      duration,
+      analyzedFrames: frameCount,
+    });
+
+    setAnalysisProgress(100);
+
+    finishTraining();
   }
 
   async function handleStart() {
@@ -250,13 +492,14 @@ export default function Training({ onFinish }) {
     setStatus("starting");
     setError("");
     setReps(0);
+    setAnalysisProgress(0);
     inFrameRef.current = null;
     setTracking(null);
     setFormTip("");
 
     setFeedback(
       inputMode === "upload"
-        ? "Loading video analysis..."
+        ? "Preparing offline video analysis..."
         : "Starting camera and pose tracking..."
     );
 
@@ -265,8 +508,10 @@ export default function Training({ onFinish }) {
         ? createCamera(video)
         : null;
 
+    // 实时摄像头限制在每秒 15 帧，减轻电脑负担；离线分析是手动逐帧，不受这个限制
     const tracker = createPoseTracker(video, {
       onError: handleTrackerError,
+      maxFps: MAX_LIVE_FPS,
     });
 
     cameraRef.current = camera;
@@ -284,84 +529,59 @@ export default function Training({ onFinish }) {
         video.pause();
         video.srcObject = null;
         video.src = videoUrlRef.current;
-        video.currentTime = 0;
         video.load();
 
-        if (video.readyState < 2) {
-          await new Promise((resolve, reject) => {
-            const loaded = () => {
-              cleanup();
-              resolve();
-            };
+        await waitForVideoData(video);
 
-            const failed = () => {
-              cleanup();
-              reject(
-                new Error(
-                  "Cannot load this video format."
-                )
-              );
-            };
-
-            const cleanup = () => {
-              video.removeEventListener(
-                "loadeddata",
-                loaded
-              );
-
-              video.removeEventListener(
-                "error",
-                failed
-              );
-            };
-
-            video.addEventListener(
-              "loadeddata",
-              loaded,
-              { once: true }
-            );
-
-            video.addEventListener(
-              "error",
-              failed,
-              { once: true }
-            );
-
-            if (video.readyState >= 2) {
-              loaded();
-            }
-          });
-        }
+        console.log("VIDEO METADATA:", {
+          duration: video.duration,
+          videoWidth: video.videoWidth,
+          videoHeight: video.videoHeight,
+        });
       }
 
       if (!mountedRef.current) return;
 
-      await tracker.start();
+      const started = await tracker.start({
+        manual: inputMode === "upload",
+      });
 
-      if (!mountedRef.current) return;
+      if (!started || !mountedRef.current) return;
 
       startMovement();
       movementStarted = true;
       activeRef.current = true;
 
-      if (inputMode === "upload") {
-        await video.play();
-      }
-
-      if (!mountedRef.current) return;
-
       setStatus("active");
 
-      setFeedback(
-        inputMode === "upload"
-          ? "Analyzing uploaded video..."
-          : "Camera ready! Start squatting."
-      );
+      if (inputMode === "upload") {
+        setFeedback("Analyzing uploaded video...");
+
+        const token = ++analysisTokenRef.current;
+
+        startingRef.current = false;
+
+        await analyzeUploadedVideo(
+          video,
+          tracker,
+          token
+        );
+      } else {
+        setFeedback(
+          "Camera ready! Start squatting."
+        );
+      }
     } catch (err) {
+      console.error("Training failed:", err);
+
+      analysisTokenRef.current++;
+
       tracker.stop();
       camera?.stop();
 
-      if (movementStarted) {
+      video.pause();
+
+      if (movementStarted && activeRef.current) {
         stopMovement();
       }
 
@@ -374,9 +594,7 @@ export default function Training({ onFinish }) {
           err.message || "Unable to start training."
         );
 
-        setFeedback(
-          "Unable to start training."
-        );
+        setFeedback("Unable to analyze video.");
       }
     } finally {
       startingRef.current = false;
@@ -386,24 +604,13 @@ export default function Training({ onFinish }) {
   function handleEnd() {
     if (!activeRef.current) return;
 
-    activeRef.current = false;
+    console.log("ENDING TRAINING:", {
+      inputMode,
+      currentTime: videoRef.current?.currentTime,
+      duration: videoRef.current?.duration,
+    });
 
-    trackerRef.current?.stop();
-    cameraRef.current?.stop();
-
-    if (inputMode === "upload") {
-      videoRef.current?.pause();
-    }
-
-    const result = stopMovement();
-
-    setStatus("idle");
-    setFeedback("Training complete!");
-    setTracking(null);
-    setFormTip("");
-    clearTimeout(tipTimerRef.current);
-
-    onFinish(result);
+    finishTraining();
   }
 
   const isActive = status === "active";
@@ -426,7 +633,6 @@ export default function Training({ onFinish }) {
         Every repetition brings you closer to your goal.
       </p>
 
-      {/* Choose training mode */}
       <div
         className="training-input-modes"
         style={{
@@ -438,9 +644,7 @@ export default function Training({ onFinish }) {
         <button
           type="button"
           className="primary-button"
-          onClick={() =>
-            handleModeChange("camera")
-          }
+          onClick={() => handleModeChange("camera")}
           disabled={isActive || isStarting}
           aria-pressed={inputMode === "camera"}
         >
@@ -450,9 +654,7 @@ export default function Training({ onFinish }) {
         <button
           type="button"
           className="primary-button"
-          onClick={() =>
-            handleModeChange("upload")
-          }
+          onClick={handleUploadClick}
           disabled={isActive || isStarting}
           aria-pressed={inputMode === "upload"}
         >
@@ -460,25 +662,21 @@ export default function Training({ onFinish }) {
         </button>
       </div>
 
-      {/* Local video upload */}
-      {inputMode === "upload" && (
-        <div style={{ marginBottom: 20 }}>
-          <label htmlFor="training-video-file">
-            Choose a recorded workout video:
-          </label>
+      {/* Hidden input: opened by Upload Video button */}
+      <input
+        ref={fileInputRef}
+        id="training-video-file"
+        type="file"
+        accept="video/*"
+        onChange={handleVideoUpload}
+        disabled={isActive || isStarting}
+        style={{ display: "none" }}
+      />
 
-          <input
-            id="training-video-file"
-            type="file"
-            accept="video/*"
-            onChange={handleVideoUpload}
-            disabled={isActive || isStarting}
-          />
-
-          {selectedVideo && (
-            <p>Selected: {selectedVideo}</p>
-          )}
-        </div>
+      {inputMode === "upload" && selectedVideo && (
+        <p style={{ marginBottom: 16 }}>
+          Selected: {selectedVideo}
+        </p>
       )}
 
       <div className="training-layout">
@@ -494,7 +692,9 @@ export default function Training({ onFinish }) {
               {isStarting
                 ? "Starting..."
                 : isActive
-                  ? "Training Active"
+                  ? inputMode === "upload"
+                    ? "Analyzing"
+                    : "Training Active"
                   : "Ready"}
             </span>
           </div>
@@ -510,15 +710,9 @@ export default function Training({ onFinish }) {
             <video
               ref={videoRef}
               autoPlay={false}
-              // 始终静音：有声视频需要"刚点过按钮"才能自动播放，模型加载久了会被浏览器拒绝
-              muted
+              muted={inputMode === "camera"}
               playsInline
               controls={false}
-              onEnded={() => {
-                if (inputMode === "upload") {
-                  handleEnd();
-                }
-              }}
               style={{
                 display:
                   inputMode === "upload"
@@ -545,48 +739,52 @@ export default function Training({ onFinish }) {
 
             {status === "idle" &&
               inputMode === "camera" && (
-                <div
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
+                <div style={{ textAlign: "center" }}>
                   <div className="camera-symbol">
                     ✧
                   </div>
 
-                  <h2>
-                    Your journey starts here
-                  </h2>
+                  <h2>Your journey starts here</h2>
 
                   <p>
-                    Press Start Training to
-                    enable camera
+                    Press Start Training to enable camera
                   </p>
                 </div>
               )}
 
             {inputMode === "upload" &&
               !selectedVideo && (
-                <div
-                  style={{
-                    textAlign: "center",
-                  }}
-                >
+                <div style={{ textAlign: "center" }}>
                   <div className="camera-symbol">
                     ✧
                   </div>
 
-                  <h2>
-                    Upload your workout
-                  </h2>
+                  <h2>Upload your workout</h2>
 
                   <p>
-                    Choose a video to analyze
-                    your squats
+                    Choose a video to analyze your squats
                   </p>
                 </div>
               )}
           </div>
+
+          {inputMode === "upload" &&
+            (isActive || isStarting) && (
+              <div style={{ marginTop: 16 }}>
+                <p>
+                  Analyzing video... {analysisProgress}%
+                </p>
+
+                <div className="progress-track">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${analysisProgress}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
 
           {isActive && (
             <p
@@ -635,9 +833,7 @@ export default function Training({ onFinish }) {
             <div className="progress-track">
               <div
                 className="progress-fill"
-                style={{
-                  width: `${progress}%`,
-                }}
+                style={{ width: `${progress}%` }}
               />
             </div>
           </div>
@@ -649,7 +845,9 @@ export default function Training({ onFinish }) {
 
             <h3>
               {isActive
-                ? "Keep going, adventurer!"
+                ? inputMode === "upload"
+                  ? "Analyzing your workout!"
+                  : "Keep going, adventurer!"
                 : "Ready for your adventure?"}
             </h3>
 
@@ -669,7 +867,9 @@ export default function Training({ onFinish }) {
           className="primary-button"
           onClick={handleEnd}
         >
-          ■ End Training →
+          {inputMode === "upload"
+            ? "■ Finish Analysis →"
+            : "■ End Training →"}
         </button>
       ) : (
         <button
